@@ -3,17 +3,24 @@
 # TODO : gestion du workspace
 
 
+workspace=$1
+
+if [ -z "$workspace" ]
+then
+    workspace="default"
+fi
+
 cd layer-kubernetes
-./destroy.sh
+./destroy.sh $workspace
 cd -
 
 cd layer-data
-./destroy.sh
+./destroy.sh $workspace
 cd -
 
 
 cd layer-base
-./destroy.sh
+./destroy.sh $workspace
 cd -
 
 cd layer-project

@@ -2,7 +2,7 @@
 
 workspace=$1
 
-if [ -z "$var" ]
+if [ -z "$workspace" ]
 then
     workspace="default"
 fi

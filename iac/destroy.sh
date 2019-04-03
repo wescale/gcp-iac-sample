@@ -1,5 +1,12 @@
 #!/bin/bash
 
+workspace=$1
+
+if [ -z "$workspace" ]
+then
+    workspace="default"
+fi
+
 cd terraform
-./destroy.sh
+./destroy.sh $workspace
 cd -

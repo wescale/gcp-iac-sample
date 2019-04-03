@@ -67,6 +67,6 @@ resource "google_container_node_pool" "np-default" {
       Plateform = "${terraform.workspace}"
     }
 
-    tags = ["kubernetes", "lp-cluster"]
+    tags = ["kubernetes", "lp-cluster-${terraform.workspace}"]
   }
 }

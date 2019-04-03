@@ -2,7 +2,7 @@
 
 workspace=$1
 
-if [ -z "$var" ]
+if [ -z "$workspace" ]
 then
     workspace="default"
 fi
@@ -13,8 +13,21 @@ REGION="europe-west3"
 MYIP=$(curl ifconfig.me)
 GCP_PROJECT="livingpackets-sandbox"
 
-terraform workspace select $workspace
-terraform apply \
-    --var "region=$REGION" \
-    --var "myip=$MYIP" \
-    --var "gcp-project=$GCP_PROJECT"
+# terraform workspace select $workspace
+# terraform apply \
+#     --var "region=$REGION" \
+#     --var "myip=$MYIP" \
+#     --var "gcp-project=$GCP_PROJECT"
+
+ig=$(gcloud compute instance-groups list --project livingpackets-sandbox --project $GCP_PROJECT | grep np-default | cut -d ' ' -f1)
+az=$(gcloud compute instance-groups list --project livingpackets-sandbox --project $GCP_PROJECT | grep np-default | cut -d ' ' -f3)
+ig_array=( $ig )
+az_array=( $az )
+it=0
+for i in "${ig_array[@]}"
+do
+    echo "Port named for $i"
+    gcloud compute instance-groups set-named-ports $i --named-ports=http:32080 --project $GCP_PROJECT --zone ${az_array[$it]}
+    it=$((it+1))
+    echo "Iterate $it"
+done 
