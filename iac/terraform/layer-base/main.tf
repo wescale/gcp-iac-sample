@@ -11,6 +11,14 @@ variable "region" {
   default = "europe-west3"
 }
 
+variable "pod-net-name" {
+  default = "c0-pods"
+}
+
+variable "svc-net-name" {
+  default = "c0-services"
+}
+
 terraform {
   backend "gcs" {
     bucket = "tf-wescale-sandbox"
@@ -26,4 +34,3 @@ data "terraform_remote_state" "layer-project" {
     prefix = "terraform/layer-project"
   }
 }
-

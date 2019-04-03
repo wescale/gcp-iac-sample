@@ -3,6 +3,11 @@ provider "google" {
   project = "${var.gcp-project}"
 }
 
+provider "google-beta" {
+  region  = "${var.region}"
+  project = "${var.gcp-project}"
+}
+
 variable "gcp-project" {
   default = "livingpackets-sandbox"
 }
@@ -10,6 +15,8 @@ variable "gcp-project" {
 variable "region" {
   default = "europe-west3"
 }
+
+variable "myip" {}
 
 terraform {
   backend "gcs" {
@@ -32,7 +39,6 @@ data "terraform_remote_state" "layer-base" {
 
   config {
     bucket = "tf-wescale-sandbox"
-    prefix = "terraform/layer-base"
+    path   = "terraform/layer-base/${terraform.workspace}.tfstate"
   }
 }
-

@@ -31,8 +31,8 @@ data "terraform_remote_state" "layer-base" {
   backend = "gcs"
 
   config {
-    bucket = "tf-wescale-sandbox"
-    prefix = "terraform/layer-base"
+    workspace = "${terraform.workspace}"
+    bucket    = "tf-wescale-sandbox"
+    prefix    = "terraform/layer-base"
   }
 }
-
