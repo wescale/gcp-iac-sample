@@ -5,18 +5,18 @@ resource "google_compute_network" "lp-net" {
 
 resource "google_compute_subnetwork" "lp-private-subnet" {
   name          = "lp-private-subnet-${terraform.workspace}"
-  ip_cidr_range = "192.168.0.0/20"
+  ip_cidr_range = "${var.range-ip}"
   network       = "${google_compute_network.lp-net.self_link}"
   region        = "${var.region}"
 
   secondary_ip_range {
     range_name    = "${var.pod-net-name}"
-    ip_cidr_range = "10.0.0.0/16"
+    ip_cidr_range = "${var.range-ip-pod}"
   }
 
   secondary_ip_range {
     range_name    = "${var.svc-net-name}"
-    ip_cidr_range = "10.1.0.0/16"
+    ip_cidr_range = "${var.range-ip-svc}"
   }
 
   private_ip_google_access = true

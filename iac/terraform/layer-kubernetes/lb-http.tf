@@ -73,4 +73,5 @@ resource "google_compute_backend_bucket" "lp-static" {
 resource "google_storage_bucket" "lp-static-bucket" {
   name     = "lp-static-bucket-${terraform.workspace}"
   location = "${var.region}"
+  force_destroy = true
 }

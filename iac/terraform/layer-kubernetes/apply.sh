@@ -13,11 +13,11 @@ REGION="europe-west3"
 MYIP=$(curl ifconfig.me)
 GCP_PROJECT="livingpackets-sandbox"
 
-# terraform workspace select $workspace
-# terraform apply \
-#     --var "region=$REGION" \
-#     --var "myip=$MYIP" \
-#     --var "gcp-project=$GCP_PROJECT"
+terraform workspace select $workspace
+terraform apply \
+    --var "region=$REGION" \
+    --var "myip=$MYIP" \
+    --var "gcp-project=$GCP_PROJECT"
 
 ig=$(gcloud compute instance-groups list --project livingpackets-sandbox --project $GCP_PROJECT | grep np-default | cut -d ' ' -f1)
 az=$(gcloud compute instance-groups list --project livingpackets-sandbox --project $GCP_PROJECT | grep np-default | cut -d ' ' -f3)

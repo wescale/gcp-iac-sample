@@ -16,8 +16,8 @@ resource "google_container_cluster" "lp-cluster" {
     }
   }
 
-  min_master_version = "1.12.5-gke.5"
-  node_version       = "1.12.5-gke.5"
+  min_master_version = "${var.k8s-version}"
+  node_version       = "${var.k8s-version}"
 
   network    = "${data.terraform_remote_state.layer-base.lp-network}"
   subnetwork = "${data.terraform_remote_state.layer-base.lp-sub-network}"
@@ -50,8 +50,8 @@ resource "google_container_node_pool" "np-default" {
   node_count = 1
 
   node_config {
-    machine_type = "n1-standard-1"
-    preemptible  = true
+    machine_type = "${var.instance-type}"
+    preemptible  = "${var.preemptible}"
 
     oauth_scopes = [
       "https://www.googleapis.com/auth/compute",

@@ -8,16 +8,6 @@ provider "google-beta" {
   project = "${var.gcp-project}"
 }
 
-variable "gcp-project" {
-  default = "livingpackets-sandbox"
-}
-
-variable "region" {
-  default = "europe-west3"
-}
-
-variable "myip" {}
-
 terraform {
   backend "gcs" {
     bucket = "tf-wescale-sandbox"

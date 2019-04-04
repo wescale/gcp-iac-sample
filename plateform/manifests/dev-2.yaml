@@ -1,0 +1,35 @@
+name: dev-2
+type: dev
+gcp-project: livingpackets-sandbox
+region: europe-west3
+infrastructure:
+  range-ip: 192.168.0.0/20
+  range-ip-pod: 10.0.0.0/16
+  range-ip-svc: 10.1.0.0/16
+  gke:
+    version: 1.12
+    instance-type: n1-standard-1
+    min: 3
+    max: 30
+    preemtible: true
+    ips_whiltelist:
+      - 37.173.210.210/32
+  dependancies:
+    certmanager:
+      enabled: true
+      version: x
+applications:
+  - name: app_a
+    version: 0.0.3
+    parameters:
+      - env:
+          name: TEST
+          value: test
+    documentation: "http://swagger.io"  
+  - name: app_b
+    version: 0.0.3
+    parameters:
+      - env:
+          name: TEST
+          value: test
+    documentation: "http://swagger.io"
