@@ -16,11 +16,11 @@ resource "google_sql_database_instance" "lp-instance-sql" {
 resource "google_sql_user" "lb-sql-user1" {
   name     = "user1-${terraform.workspace}"
   instance = "${google_sql_database_instance.lp-instance-sql.name}"
-  password = "testme"
+  password = "${var.user1_password}"
 }
 
 resource "google_sql_user" "lb-sql-user2" {
   name     = "user2-${terraform.workspace}"
   instance = "${google_sql_database_instance.lp-instance-sql.name}"
-  password = "testme"
+  password = "${var.user2_password}"
 }

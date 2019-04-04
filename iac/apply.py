@@ -31,6 +31,8 @@ with open("../plateform/manifests/dev-2.yaml", 'r') as stream:
         print("Layer-data...")
         user1_password = randomString()
         user2_password = randomString()
+        print("user1_password:"+ user1_password)
+        print("user2_password:"+ user2_password)
         create_data(plateform, user1_password, user2_password)
 
         connect_gke(plateform)
@@ -44,3 +46,12 @@ with open("../plateform/manifests/dev-2.yaml", 'r') as stream:
         print(exc)
     except Exception as inst:
         print(inst)
+
+# To test:
+
+# kubectl run mysql-client \
+#     --image=mysql:5.7 \
+#     -it \
+#     --rm \
+#     --restart=Never \
+#     -- mysql -h 10.7.0.3 -user1-dev-2 -ptestme

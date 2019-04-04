@@ -9,11 +9,11 @@ fi
 
 echo "Create $workspace plateform... kubernetes step"
 
-kubectl apply -f test/app.yaml
+kubectl apply -f kubernetes/test/app.yaml
 
 username=$(gcloud config get-value account)
 kubectl create clusterrolebinding cluster-admin-binding --clusterrole=cluster-admin --user=$username
 
-kubectl apply -f helm/rbac.yaml
+kubectl apply -f kubernetes/helm/rbac.yaml
 helm init --service-account tiller
 

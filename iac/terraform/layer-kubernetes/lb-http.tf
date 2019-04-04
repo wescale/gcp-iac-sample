@@ -4,7 +4,6 @@ resource "google_compute_global_address" "lb-public-ip" {
 
 resource "google_compute_global_forwarding_rule" "lp-public-lb-http" {
   name       = "lp-public-lb-http-${terraform.workspace}"
-  id         = "lp-public-lb-http-${terraform.workspace}"
   target     = "${google_compute_target_http_proxy.lp-k8s-pool.self_link}"
   ip_address = "${google_compute_global_address.lb-public-ip.self_link}"
   port_range = "80"
