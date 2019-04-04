@@ -2,8 +2,10 @@
 
 version=$1
 
+cd src
 docker build -t eu.gcr.io/livingpackets-sandbox/app:$version .
 docker push eu.gcr.io/livingpackets-sandbox/app:$version
+cd -
 
 helm install --dry-run --debug ./app-chart
 helm lint ./app-chart
