@@ -7,17 +7,14 @@ then
     workspace="default"
 fi
 
-echo "Create $workspace plateform... layer-kubernetes"
+echo "Create $workspace plateform... layer-data"
 
 REGION="europe-west3"
-MYIP=$(curl ifconfig.me)
-MYIP="$MYIP/32"
 GCP_PROJECT="livingpackets-sandbox"
+DB_VERSION="MYSQL_5_6"
 
 terraform workspace select $workspace
 terraform apply \
     --var "region=$REGION" \
-    --var "myip=$MYIP" \
+    --var "database_version=$DB_VERSION" \
     --var "gcp-project=$GCP_PROJECT"
-
-./apply_post.sh $workspace $GCP_PROJECT

@@ -1,4 +1,3 @@
-
 variable "gcp-project" {
   default = "livingpackets-sandbox"
 }

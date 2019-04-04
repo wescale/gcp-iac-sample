@@ -9,10 +9,6 @@ fi
 
 echo "Create $workspace plateform... kubernetes step"
 
-gcloud beta container clusters get-credentials lp-cluster-$workspace \
-    --region europe-west3 \
-    --project livingpackets-sandbox
-
 kubectl apply -f test/app.yaml
 
 username=$(gcloud config get-value account)

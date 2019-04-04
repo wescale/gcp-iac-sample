@@ -3,6 +3,7 @@ type: dev
 gcp-project: livingpackets-sandbox
 region: europe-west3
 infrastructure:
+  version: 0.0.1
   range-ip: 192.168.0.0/20
   range-ip-pod: 10.0.0.0/16
   range-ip-svc: 10.1.0.0/16
@@ -11,25 +12,26 @@ infrastructure:
     instance-type: n1-standard-1
     min: 3
     max: 30
-    preemtible: true
-    ips_whiltelist:
+    preemptible: true
+    ips_whitelist:
       - 37.173.210.210/32
+  cloudsql:
+    version: MYSQL_5_7
+  namespaces:
+    - gateways
+    - webservices
+    - monitoring
   dependancies:
     certmanager:
       enabled: true
       version: x
 applications:
   - name: app_a
-    version: 0.0.3
-    parameters:
-      - env:
-          name: TEST
-          value: test
-    documentation: "http://swagger.io"  
+    version: 1.0.4
+    documentation: "http://swagger.io"
+  - name: app_a
+    version: 2.0.3
+    documentation: "http://swagger.io"
   - name: app_b
     version: 0.0.3
-    parameters:
-      - env:
-          name: TEST
-          value: test
     documentation: "http://swagger.io"

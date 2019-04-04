@@ -18,12 +18,11 @@ cd layer-data
 ./destroy.sh $workspace
 cd -
 
-
 cd layer-base
 ./destroy.sh $workspace
 cd -
 
-cd layer-project
-./destroy.sh
-cd -
+# cd layer-project
+# ./destroy.sh
+# cd -
 

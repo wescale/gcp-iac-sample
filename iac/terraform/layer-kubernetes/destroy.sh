@@ -12,5 +12,5 @@ fi
 terraform workspace select $workspace
 
 terraform destroy \
-    --var "myip=$MYIP"
+    --var "myip=$MYIP/32"
 
