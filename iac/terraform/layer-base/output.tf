@@ -13,7 +13,3 @@ output "pod-net-name" {
 output "svc-net-name" {
   value = "${var.svc-net-name}"
 }
-
-output "lp-cloud-services" {
-  value = "${google_compute_network.lp-cloud-private.self_link}"
-}
