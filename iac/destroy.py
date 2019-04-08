@@ -6,8 +6,9 @@ from functions_iac import *
 from functions_k8s import *
 from utils_iac import randomString
 
+name = raw_input("Nom du fichier: ")
 
-with open("../plateform/manifests/dev-2.yaml", 'r') as stream:
+with open("../plateform/manifests/"+name+".yaml", 'r') as stream:
     try:
         plateform=yaml.load(stream)
         print(plateform)
@@ -18,10 +19,12 @@ with open("../plateform/manifests/dev-2.yaml", 'r') as stream:
         delete_kubernetes(plateform)
 
         print("Layer-data...")
-        user1_password, user2_password = get_secret()
         unique_id = plateform['infrastructure']['cloudsql']['instance-num']
         del plateform['infrastructure']['cloudsql']['instance-num']
 
+
+        user1_password="test"
+        user2_password="test"
         delete_data(plateform, user1_password, user2_password, unique_id)
 
         print("Layer-base...")
@@ -30,7 +33,7 @@ with open("../plateform/manifests/dev-2.yaml", 'r') as stream:
         # print("Layer-project...")
         # create_project()
         
-        with open('../plateform/manifests/dev-2.yaml', 'w') as yaml_file:
+        with open("../plateform/manifests/"+name+".yaml", 'w') as yaml_file:
             yaml.dump(plateform, yaml_file, default_flow_style=False)
 
     except yaml.YAMLError as exc:

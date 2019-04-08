@@ -52,7 +52,7 @@ with open("../plateform/manifests/"+name+".yaml", 'r') as stream:
 
         apply_kubernetes(plateform)
 
-        with open('../plateform/manifests/dev-2.yaml', 'w') as yaml_file:
+        with open("../plateform/manifests/"+name+".yaml", 'w') as yaml_file:
             yaml.dump(plateform, yaml_file, default_flow_style=False)
 
     except yaml.YAMLError as exc:

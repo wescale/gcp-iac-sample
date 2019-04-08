@@ -6,13 +6,12 @@ import base64
 def create_project():
     tf = Terraform(working_dir='terraform/layer-project')
     code, _, _ = tf.apply(capture_output=False, no_color=IsNotFlagged, skip_plan=IsNotFlagged)
-    print(code)
     if code != 0:
         raise Exception("error in Terraform layer-project")
 
 def get_service_account():
     tf = Terraform(working_dir='terraform/layer-base')
-    code, stdout, stderr = tf.cmd("output app_a_key", capture_output=True, no_color=IsFlagged)
+    _, stdout, _ = tf.cmd("output app_a_key", capture_output=True, no_color=IsFlagged)
     return base64.b64decode(stdout)
 
 def create_base(plateform):
@@ -64,7 +63,6 @@ def create_kubernetes(plateform):
     print("Post Apply script execution...")
     subprocess.call(["terraform/layer-kubernetes/apply_post.sh", plateform['name'], plateform['gcp-project']])
 
-    print(code)
     if code != 0:
         raise Exception("error in Terraform layer-kubernetes")
 
@@ -86,7 +84,6 @@ def delete_kubernetes(plateform):
         skip_plan=IsNotFlagged,
         auto_approve=True)
 
-    print(code)
     if code != 0:
         raise Exception("error in Terraform layer-kubernetes")
 
