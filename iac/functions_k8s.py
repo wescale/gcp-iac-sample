@@ -4,6 +4,10 @@ import base64
 from utils_iac import randomString
 import subprocess
 
+def connect_gke(plateform):
+    print("Connect to GKE...")
+    subprocess.call(["scripts/connect-gke.sh", plateform['name'], plateform['region'] ,plateform['gcp-project']])
+
 def create_namespace(name):
     print("Create namespace:" + name)
     config.load_kube_config()

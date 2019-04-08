@@ -1,5 +1,5 @@
 resource "google_service_account" "app_a" {
-  account_id   = "application-a-fortest"
+  account_id   = "application-a-${terraform.workspace}"
   display_name = "service account for app a"
 }
 

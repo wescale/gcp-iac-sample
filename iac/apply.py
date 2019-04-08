@@ -6,8 +6,9 @@ from functions_iac import *
 from functions_k8s import *
 from utils_iac import randomString
 
+name = raw_input("Nom du fichier: ")
 
-with open("../plateform/manifests/dev-2.yaml", 'r') as stream:
+with open("../plateform/manifests/"+name+".yaml", 'r') as stream:
     try:
         plateform=yaml.load(stream)
         print(plateform)
@@ -30,9 +31,11 @@ with open("../plateform/manifests/dev-2.yaml", 'r') as stream:
         user1_password, user2_password = get_secret()
         print("user1_password:"+ user1_password)
         print("user2_password:"+ user2_password)
-        if plateform['infrastructure']['cloudsql']['instance-num']:
+        if 'instance-num' in plateform['infrastructure']['cloudsql']:
+            print("use existing instance...")
             unique_id = plateform['infrastructure']['cloudsql']['instance-num']
         else:
+            print("random string generate...")
             unique_id = randomString()
 
         print("unique-id:"+ unique_id)
