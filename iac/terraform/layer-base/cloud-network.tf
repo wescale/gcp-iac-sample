@@ -1,5 +1,5 @@
-
 resource "google_compute_global_address" "lp-cloud-private-ip" {
+  provider      = "google-beta"
   name          = "lp-cloud-private-ip-${terraform.workspace}"
   purpose       = "VPC_PEERING"
   address_type  = "INTERNAL"

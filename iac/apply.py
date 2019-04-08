@@ -3,13 +3,8 @@
 import yaml
 from python_terraform import *
 from functions_iac import *
-import random
-import string
-
-def randomString(stringLength=10):
-    """Generate a random string of fixed length """
-    letters = string.ascii_lowercase
-    return ''.join(random.choice(letters) for i in range(stringLength))
+from functions_k8s import *
+from utils_iac import randomString
 
 
 with open("../plateform/manifests/dev-2.yaml", 'r') as stream:
@@ -28,19 +23,32 @@ with open("../plateform/manifests/dev-2.yaml", 'r') as stream:
         print("Layer-kubernetes...")
         create_kubernetes(plateform)
 
+        print("connect to new plateform...")
+        connect_gke(plateform)
+
         print("Layer-data...")
-        user1_password = randomString()
-        user2_password = randomString()
+        user1_password, user2_password = get_secret()
         print("user1_password:"+ user1_password)
         print("user2_password:"+ user2_password)
-        create_data(plateform, user1_password, user2_password)
+        if plateform['infrastructure']['cloudsql']['instance-num']:
+            unique_id = plateform['infrastructure']['cloudsql']['instance-num']
+        else:
+            unique_id = randomString()
 
-        connect_gke(plateform)
+        print("unique-id:"+ unique_id)
+        create_data(plateform, user1_password, user2_password, unique_id)
+        plateform['infrastructure']['cloudsql']['instance-num']=unique_id
 
         for name in plateform['infrastructure']['namespaces']:
             create_namespace(name)
 
+        print("Save SQL secrets in kubernetes")
+        save_secrets(user1_password, user2_password)
+
         apply_kubernetes(plateform)
+
+        with open('../plateform/manifests/dev-2.yaml', 'w') as yaml_file:
+            yaml.dump(plateform, yaml_file, default_flow_style=False)
 
     except yaml.YAMLError as exc:
         print(exc)

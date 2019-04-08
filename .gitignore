@@ -1,1 +1,4 @@
 .vscode
+iac/functions_iac.pyc
+iac/functions_k8s.pyc
+iac/utils_iac.pyc

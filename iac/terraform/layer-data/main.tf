@@ -23,7 +23,7 @@ data "terraform_remote_state" "layer-base" {
   backend = "gcs"
 
   config {
-    bucket    = "tf-wescale-sandbox"
+    bucket = "tf-wescale-sandbox"
     path   = "terraform/layer-base/${terraform.workspace}.tfstate"
   }
 }

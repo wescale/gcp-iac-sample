@@ -14,6 +14,11 @@ resource "google_container_cluster" "lp-cluster" {
       cidr_block   = "${var.myip}"
       display_name = "dyn"
     }
+
+    cidr_blocks {
+      cidr_block   = "81.250.133.68/32"
+      display_name = "WeScale"
+    }
   }
 
   min_master_version = "${var.k8s-version}"
