@@ -45,8 +45,10 @@ with open("../plateform/manifests/"+name+".yaml", 'r') as stream:
         for name in plateform['infrastructure']['namespaces']:
             create_namespace(name)
 
+
         print("Save SQL secrets in kubernetes")
-        save_secrets(user1_password, user2_password)
+        sa_key = get_service_account()
+        save_secrets(user1_password, user2_password, sa_key)
 
         apply_kubernetes(plateform)
 
@@ -60,9 +62,4 @@ with open("../plateform/manifests/"+name+".yaml", 'r') as stream:
 
 # To test:
 
-# kubectl run mysql-client \
-#     --image=mysql:5.7 \
-#     -it \
-#     --rm \
-#     --restart=Never \
-#     -- mysql -h 10.7.0.3 -user1-dev-2 -ptestme
+# kubectl run mysql-client --image=mysql:5.7 -it --rm --restart=Never -- mysql -h bdd.dev-3.internal.lp -uuser1-dev-3 -p

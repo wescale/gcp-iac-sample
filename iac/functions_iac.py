@@ -1,6 +1,7 @@
 
 from python_terraform import *
 import subprocess
+import base64
 
 def create_project():
     tf = Terraform(working_dir='terraform/layer-project')
@@ -8,6 +9,11 @@ def create_project():
     print(code)
     if code != 0:
         raise Exception("error in Terraform layer-project")
+
+def get_service_account():
+    tf = Terraform(working_dir='terraform/layer-base')
+    code, stdout, stderr = tf.cmd("output app_a_key", capture_output=True, no_color=IsFlagged)
+    return base64.b64decode(stdout)
 
 def create_base(plateform):
     tf = Terraform(working_dir='terraform/layer-base')

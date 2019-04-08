@@ -27,8 +27,56 @@ def create_namespace(name):
 def apply_kubernetes(plateform):
     subprocess.call(["kubernetes/apply.sh", plateform['name']])
 
-def save_secrets(user1_password, user2_password):
-    subprocess.call(["scripts/create-secrets.sh", user1_password, user2_password])
+def save_secrets(user1_password, user2_password, sa_key):
+    # subprocess.call(["scripts/create-secrets.sh", user1_password, user2_password])
+
+    config.load_kube_config()
+    api_instance = client.CoreV1Api()
+    print("Create secret for 'cloudsql-secrets-user1'")
+    body = client.V1Secret(metadata=client.V1ObjectMeta(name="cloudsql-secrets-user1"))
+    body.data = {
+        "user": base64.b64encode("user1"), 
+        "password": base64.b64encode(user1_password)
+    }
+    body.type = "Opaque" 
+    try:
+        api_response = api_instance.create_namespaced_secret(body=body, namespace='webservices')
+    except ApiException as e:
+        # print("Exception when calling CoreV1Api->create_namespaced_secret: %s\n" % e)
+        if e.status == 409:
+            print("secret already exist")
+        else:
+            print("%s\n" % e)
+    
+    print("Create secret for 'cloudsql-secrets-user2'")
+    body = client.V1Secret(metadata=client.V1ObjectMeta(name="cloudsql-secrets-user2"))
+    body.data = {
+        "user": base64.b64encode("user2"), 
+        "password": base64.b64encode(user2_password)
+    }
+    body.type = "Opaque"
+    try:
+        api_response = api_instance.create_namespaced_secret(body=body, namespace='webservices')
+    except ApiException as e:
+        # print("Exception when calling CoreV1Api->create_namespaced_secret: %s\n" % e)
+        if e.status == 409:
+            print("secret already exist")
+        else:
+            print("%s\n" % e)
+
+
+    print("Create secret for 'service-account'")
+    body = client.V1Secret(metadata=client.V1ObjectMeta(name="service-account"))
+    body.data = {"sa-key": base64.b64encode(sa_key)}
+    body.type = "Opaque"
+    try:
+        api_response = api_instance.create_namespaced_secret(body=body, namespace='webservices')
+    except ApiException as e:
+        # print("Exception when calling CoreV1Api->create_namespaced_secret: %s\n" % e)
+        if e.status == 409:
+            print("secret already exist")
+        else:
+            print("%s\n" % e)
 
 def get_secret():
     config.load_kube_config()
