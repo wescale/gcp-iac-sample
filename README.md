@@ -198,8 +198,6 @@ chacun de ces tests doit archiver ses résultats dans le repertoire GCS utilisé
 Avant un passage en production le release manager doit comparer le résultat de tout ces tests pour prendre une décision.
 Des scripts peuvent être mis en place pour aider à la prise de décision. (comparaison release précédent/après)
 
-## Bonnes pratiques
-
 ## Reste à faire
 
 - CloudFunction
@@ -209,3 +207,4 @@ Des scripts peuvent être mis en place pour aider à la prise de décision. (com
 - déploiement des applications lors de l'application du manifeste
 - dans le script de CD, tester si le package est installé avant de faire l'upgrade
 - variabilisation du type d'instance SQL dans le manifeste
+- deploiement app test via Python

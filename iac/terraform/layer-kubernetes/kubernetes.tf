@@ -63,8 +63,6 @@ resource "google_container_node_pool" "np-default" {
       "https://www.googleapis.com/auth/devstorage.read_only",
       "https://www.googleapis.com/auth/logging.write",
       "https://www.googleapis.com/auth/monitoring",
-      "https://www.googleapis.com/auth/ndev.clouddns.readwrite",
-      "https://www.googleapis.com/auth/cloud-language",
     ]
 
     labels {

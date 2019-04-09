@@ -14,3 +14,6 @@ echo "Create $workspace plateform... kubernetes step"
 gcloud beta container clusters get-credentials lp-cluster-$workspace \
     --region $region \
     --project $GCP_PROJECT
+
+username=$(gcloud config get-value account)
+kubectl create clusterrolebinding cluster-admin-binding --clusterrole=cluster-admin --user=$username
