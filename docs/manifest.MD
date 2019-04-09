@@ -14,6 +14,7 @@ Il existe plusieurs partie dans le manifeste:
   - creation des namespaces kubernetes
 - déploiement des applications avec pour chacune:
   - son nom
+  - le namespace de l'application
   - la version à déployer
   - le lien vers la documentation dynamique
 
@@ -29,10 +30,10 @@ gcp-project: livingpackets-sandbox
 region: europe-west3
 type: dev
 infrastructure:
+  version: 0.0.1
   range-ip: 192.168.0.0/20
   range-ip-pod: 10.0.0.0/16
   range-ip-svc: 10.1.0.0/16
-  version: 0.0.1
   cloudsql:
     version: MYSQL_5_7
   gke:
@@ -55,10 +56,13 @@ applications:
 - documentation: http://swagger.io
   name: app_a
   version: 1.0.4
+  namespace: webservices
 - documentation: http://swagger.io
   name: app_a
   version: 2.0.3
+  namespace: webservices
 - documentation: http://swagger.io
   name: app_b
   version: 0.0.3
+  namespace: gateways
 ```

@@ -130,3 +130,24 @@ resource "google_compute_backend_bucket" "lp-static" {
   enable_cdn  = false
 }
 ```
+
+## Post script
+
+Cas particulier non pris en charge par Terraform, il faut attribuer un "nom" au port des instances GCE utilisés par GKE pour pouvoir faire le HealthCheck du LB HTTP.
+
+C'est l'objectif de ce script: [iac/terraform/layer-kubernetes/apply_post.sh](iac/terraform/layer-kubernetes/apply_post.sh)
+
+On commence par obtenir la liste des groupes d'instances.
+
+```language-bash
+ig=$(gcloud compute instance-groups list --project livingpackets-sandbox --project $GCP_PROJECT | grep np-default | cut -d ' ' -f1)
+```
+
+Pour chacune des instances groupes on utilise une commande gcloud pour nommer le port.
+
+```language-bash
+for...
+do
+    gcloud compute instance-groups set-named-ports $i --named-ports=http:32080 --project $GCP_PROJECT --zone ${az_array[$it]}
+done 
+```

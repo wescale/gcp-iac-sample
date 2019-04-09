@@ -59,7 +59,3 @@ with open("../plateform/manifests/"+name+".yaml", 'r') as stream:
         print(exc)
     except Exception as inst:
         print(inst)
-
-# To test:
-
-# kubectl run mysql-client --image=mysql:5.7 -it --rm --restart=Never -- mysql -h bdd.dev-3.internal.lp -uuser1-dev-3 -p

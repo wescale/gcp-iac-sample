@@ -198,6 +198,33 @@ chacun de ces tests doit archiver ses résultats dans le repertoire GCS utilisé
 Avant un passage en production le release manager doit comparer le résultat de tout ces tests pour prendre une décision.
 Des scripts peuvent être mis en place pour aider à la prise de décision. (comparaison release précédent/après)
 
+# Pour lancer ce POC
+
+## si besoin après création du GCP Project
+
+```language-bash
+cd iac/terraform/layer-project
+./apply.sh
+```
+
+## dans tous les cas
+
+```language-bash
+cd iac
+python apply.py
+```
+
+Renseigner le nom du fichier, ici "dev-2"
+
+A la fin pour tester la connexion à CloudSQL:
+
+```language-bash
+NOM_PF="dev-3"
+
+kubectl run mysql-client --image=mysql:5.7 -it --rm --restart=Never -- mysql -h bdd.$NOM_PF.internal.lp -uuser1-NOM_PF -p
+```
+
+
 ## Reste à faire
 
 - CloudFunction
@@ -208,3 +235,4 @@ Des scripts peuvent être mis en place pour aider à la prise de décision. (com
 - dans le script de CD, tester si le package est installé avant de faire l'upgrade
 - variabilisation du type d'instance SQL dans le manifeste
 - deploiement app test via Python
+- commande pour lancer et tester le POC
