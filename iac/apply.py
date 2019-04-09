@@ -6,9 +6,9 @@ from functions_iac import *
 from functions_k8s import *
 from utils_iac import randomString
 
-name = raw_input("Nom du fichier: ")
+name_file = raw_input("Nom du fichier: ")
 
-with open("../plateform/manifests/"+name+".yaml", 'r') as stream:
+with open("../plateform/manifests/"+name_file+".yaml", 'r') as stream:
     try:
         plateform=yaml.load(stream)
         print(plateform)
@@ -52,7 +52,7 @@ with open("../plateform/manifests/"+name+".yaml", 'r') as stream:
 
         apply_kubernetes(plateform)
 
-        with open("../plateform/manifests/"+name+".yaml", 'w') as yaml_file:
+        with open("../plateform/manifests/"+name_file+".yaml", 'w') as yaml_file:
             yaml.dump(plateform, yaml_file, default_flow_style=False)
 
     except yaml.YAMLError as exc:
