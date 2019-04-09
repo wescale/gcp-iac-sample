@@ -106,7 +106,9 @@ Dans ce layer les éléments suivants sont créés:
 - PubSub Topic
 - PubSub Subscription
 - CloudSQL
+- Création d'un Record DNS dans la zone privé DNS de GCP
 
+Attention: l'utilisation de CloudSQL nécessite la génération d 'un numéro unique pour la BDD. Il faut que le job de création d'infrastructure puisse commiter & pusher le manifest dans son repos.
 
 ### Kubernetes dépendances
 
@@ -206,3 +208,4 @@ Des scripts peuvent être mis en place pour aider à la prise de décision. (com
 - installation de CertManager
 - déploiement des applications lors de l'application du manifeste
 - dans le script de CD, tester si le package est installé avant de faire l'upgrade
+- variabilisation du type d'instance SQL dans le manifeste
