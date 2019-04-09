@@ -1,3 +1,8 @@
+# Plateform manifest 
+
+## Exemple
+
+```language-yaml
 name: dev-3
 gcp-project: livingpackets-sandbox
 region: europe-west3
@@ -35,3 +40,4 @@ infrastructure:
   range-ip-pod: 10.0.0.0/16
   range-ip-svc: 10.1.0.0/16
   version: 0.0.1
+```
