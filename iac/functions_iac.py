@@ -20,7 +20,13 @@ def create_base(plateform):
     if code == 1:
         tf.cmd("workspace new " + plateform['name'], capture_output=False, no_color=IsNotFlagged, skip_plan=IsNotFlagged)
     code, _, _ = tf.apply(
-        var={'region': plateform['region'], 'gcp-project': plateform['gcp-project'] }, 
+        var={
+            'region': plateform['region'], 
+            'gcp-project': plateform['gcp-project'],
+            'range-ip': plateform['infrastructure']['range-ip'],
+            'range-ip-pod': plateform['infrastructure']['range-ip-pod'],
+            'range-ip-svc': plateform['infrastructure']['range-ip-svc']
+        }, 
         capture_output=False, 
         no_color=IsNotFlagged, 
         skip_plan=IsNotFlagged,
@@ -53,7 +59,10 @@ def create_kubernetes(plateform):
             'k8s-version': plateform['infrastructure']['gke']['version'],
             'preemptible': plateform['infrastructure']['gke']['preemptible'],
             'instance-type': plateform['infrastructure']['gke']['instance-type'],
-            'myip': plateform['infrastructure']['gke']['ips_whitelist'][0]
+            'myip': plateform['infrastructure']['gke']['ips_whitelist'][0],
+            'min_node': plateform['infrastructure']['gke']['min'],
+            'max_node': plateform['infrastructure']['gke']['max'],
+            'range_ip_master': plateform['infrastructure']['range-ip-master']
         }, 
         capture_output=False, 
         no_color=IsNotFlagged, 

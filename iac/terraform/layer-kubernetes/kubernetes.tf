@@ -6,12 +6,12 @@ resource "google_container_cluster" "lp-cluster" {
   private_cluster_config {
     enable_private_endpoint = false
     enable_private_nodes    = true
-    master_ipv4_cidr_block  = "192.168.16.0/28"
+    master_ipv4_cidr_block  = "${var.range_ip_master}"
   }
 
   master_authorized_networks_config {
     cidr_blocks {
-      cidr_block   = "${var.myip}"
+      cidr_block   = "${var.myip}/32"
       display_name = "dyn"
     }
 
@@ -24,8 +24,8 @@ resource "google_container_cluster" "lp-cluster" {
   min_master_version = "${var.k8s-version}"
   node_version       = "${var.k8s-version}"
 
-  network    = "${data.terraform_remote_state.layer-base.lp-network}"
-  subnetwork = "${data.terraform_remote_state.layer-base.lp-sub-network}"
+  network    = "${data.terraform_remote_state.layer-base.lp-network-self-link}"
+  subnetwork = "${data.terraform_remote_state.layer-base.lp-sub-network-self-link}"
 
   addons_config {
     kubernetes_dashboard {
@@ -44,6 +44,22 @@ resource "google_container_cluster" "lp-cluster" {
 
   node_pool {
     name = "default-pool"
+  }
+
+  // cluster_autoscaling {
+  //   enabled = true
+
+
+  //   // The resource_limits block supports:
+  //   // resource_type - (Required) See the docs for a list of permitted types - cpu, memory, and others.
+  //   // minimum - (Optional) The minimum value for the resource type specified.
+  //   // maximum - (Optional) The maximum value for the resource type specified.
+  // }
+
+  maintenance_policy {
+    daily_maintenance_window {
+      start_time = "03:00"
+    }
   }
 }
 
@@ -71,5 +87,15 @@ resource "google_container_node_pool" "np-default" {
     }
 
     tags = ["kubernetes", "lp-cluster-${terraform.workspace}"]
+  }
+
+  autoscaling {
+    min_node_count = "${var.min_node}"
+    max_node_count = "${var.max_node}"
+  }
+
+  management {
+    auto_repair  = true
+    auto_upgrade = true
   }
 }

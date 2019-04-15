@@ -10,6 +10,10 @@ output "lp-sub-network" {
   value = "${google_compute_subnetwork.lp-private-subnet.name}"
 }
 
+output "lp-sub-network-self-link" {
+  value = "${google_compute_subnetwork.lp-private-subnet.self_link}"
+}
+
 output "pod-net-name" {
   value = "${var.pod-net-name}"
 }

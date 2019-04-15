@@ -97,4 +97,5 @@ def get_secret():
 
     return password_user1, password_user2
 
-    
+def deploy_helm(name, version, namespace):
+    subprocess.call(["scripts/deploy-app-helm.sh", name, version, namespace])

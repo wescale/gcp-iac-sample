@@ -31,20 +31,26 @@ with open("../plateform/manifests/"+name_file+".yaml", 'r') as stream:
         user1_password, user2_password = get_secret()
         print("user1_password:"+ user1_password)
         print("user2_password:"+ user2_password)
+
+        update_yaml = False
         if 'instance-num' in plateform['infrastructure']['cloudsql']:
             print("use existing instance...")
             unique_id = plateform['infrastructure']['cloudsql']['instance-num']
         else:
             print("random string generate...")
             unique_id = randomString()
+            update_yaml = True
 
         print("unique-id:"+ unique_id)
         create_data(plateform, user1_password, user2_password, unique_id)
         plateform['infrastructure']['cloudsql']['instance-num']=unique_id
 
+        if update_yaml:
+            with open("../plateform/manifests/"+name_file+".yaml", 'w') as yaml_file:
+                yaml.dump(plateform, yaml_file, default_flow_style=False)
+
         for name in plateform['infrastructure']['namespaces']:
             create_namespace(name)
-
 
         print("Save SQL secrets in kubernetes")
         sa_key = get_service_account()
@@ -52,8 +58,10 @@ with open("../plateform/manifests/"+name_file+".yaml", 'r') as stream:
 
         apply_kubernetes(plateform)
 
-        with open("../plateform/manifests/"+name_file+".yaml", 'w') as yaml_file:
-            yaml.dump(plateform, yaml_file, default_flow_style=False)
+        print('Applications deployment:')
+        for app in plateform['applications']:
+            print("Helm apply for " + app['name'] + ", version:" + app['version'])
+            deploy_helm(app['name'], app['version'], app['namespace'])
 
     except yaml.YAMLError as exc:
         print(exc)

@@ -94,3 +94,14 @@ resource "google_dns_record_set" "mysql-instance" {
 
   rrdatas = ["${google_sql_database_instance.lp-instance-sql.private_ip_address}"]
 }
+
+resource "google_dns_record_set" "mysql-instance-slave" {
+  count = "${var.env != "dev" ? 1:0}"
+  name  = "bdd-slave-a.${data.terraform_remote_state.layer-base.dns-private-zone}"
+  type  = "A"
+  ttl   = 300
+
+  managed_zone = "${data.terraform_remote_state.layer-base.dns-private-zone-name}"
+
+  rrdatas = ["${google_sql_database_instance.lp-instance-sql-slave.private_ip_address}"]
+}

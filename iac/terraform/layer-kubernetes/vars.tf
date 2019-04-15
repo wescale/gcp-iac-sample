@@ -19,3 +19,13 @@ variable "preemptible" {
 variable "instance-type" {
   default = "n1-standard-1"
 }
+
+variable "min_node" {
+  default = 3
+}
+
+variable "max_node" {
+  default = 10
+}
+
+variable "range_ip_master" {}
