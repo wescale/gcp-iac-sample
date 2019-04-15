@@ -9,6 +9,8 @@ infrastructure:
   range-ip-svc: 10.1.0.0/16
   cloudsql:
     version: MYSQL_5_7
+    instance-type: "db-f1-micro"
+    disk-size: 20
   gke:
     instance-type: n1-standard-1
     ips_whitelist:

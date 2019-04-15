@@ -236,11 +236,8 @@ Renseigner le nom du fichier, ici "dev-2"
 ## Reste à faire
 
 - CloudFunction
-- CloudSQL de prod avec résilience
 - Monitoring des plateformes
 - installation de CertManager
 - déploiement des applications lors de l'application du manifeste
 - dans le script de CD, tester si le package est installé avant de faire l'upgrade
-- variabilisation du type d'instance SQL dans le manifeste
 - deploiement app test via Python
-- commande pour lancer et tester le POC

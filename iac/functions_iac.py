@@ -98,9 +98,12 @@ def create_data(plateform, user1_password, user2_password, unique_id):
             'region': plateform['region'], 
             'gcp-project': plateform['gcp-project'],
             'database_version': plateform['infrastructure']['cloudsql']['version'],
+            'database_instance_type': plateform['infrastructure']['cloudsql']['instance-type'],
+            'database_disk_size': plateform['infrastructure']['cloudsql']['disk-size'],
             'user1_password': user1_password,
             'user2_password': user2_password,
-            "unique_id": unique_id
+            "unique_id": unique_id,
+            'env': plateform['type']
         }, 
         capture_output=False, 
         no_color=IsNotFlagged, 
