@@ -1,4 +1,3 @@
-
 from python_terraform import *
 import subprocess
 import base64
@@ -39,7 +38,14 @@ def delete_base(plateform):
     tf = Terraform(working_dir='terraform/layer-base')
     code, _, _ = tf.cmd("workspace select " + plateform['name'], capture_output=False, no_color=IsNotFlagged, skip_plan=IsNotFlagged)
     code, _, _ = tf.destroy(
-        var={'region': plateform['region'], 'gcp-project': plateform['gcp-project'] }, 
+        var={
+            'region': plateform['region'], 
+            'gcp-project': plateform['gcp-project'],
+            'range-ip': plateform['infrastructure']['range-ip'],
+            'range-ip-pod': plateform['infrastructure']['range-ip-pod'],
+            'range-ip-svc': plateform['infrastructure']['range-ip-svc'],
+            'range-plateform': plateform['infrastructure']['range-plateform']
+        }, 
         capture_output=False, 
         no_color=IsNotFlagged, 
         skip_plan=IsNotFlagged,
@@ -87,8 +93,11 @@ def delete_kubernetes(plateform):
             'k8s-version': plateform['infrastructure']['gke']['version'],
             'preemptible': plateform['infrastructure']['gke']['preemptible'],
             'instance-type': plateform['infrastructure']['gke']['instance-type'],
-            'myip': plateform['infrastructure']['gke']['ips_whitelist'][0]
-        }, 
+            'myip': plateform['infrastructure']['gke']['ips_whitelist'][0],
+            'min_node': plateform['infrastructure']['gke']['min'],
+            'max_node': plateform['infrastructure']['gke']['max'],
+            'range_ip_master': plateform['infrastructure']['range-ip-master']
+        },
         capture_output=False, 
         no_color=IsNotFlagged, 
         skip_plan=IsNotFlagged,
@@ -131,9 +140,12 @@ def delete_data(plateform, user1_password, user2_password, unique_id):
             'region': plateform['region'], 
             'gcp-project': plateform['gcp-project'],
             'database_version': plateform['infrastructure']['cloudsql']['version'],
+            'database_instance_type': plateform['infrastructure']['cloudsql']['instance-type'],
+            'database_disk_size': plateform['infrastructure']['cloudsql']['disk-size'],
             'user1_password': user1_password,
             'user2_password': user2_password,
-            "unique_id": unique_id
+            "unique_id": unique_id,
+            'env': plateform['type']
         }, 
         capture_output=False, 
         no_color=IsNotFlagged, 

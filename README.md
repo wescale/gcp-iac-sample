@@ -238,6 +238,4 @@ Renseigner le nom du fichier, ici "dev-2"
 - CloudFunction
 - Monitoring des plateformes
 - installation de CertManager
-- déploiement des applications lors de l'application du manifeste
-- dans le script de CD, tester si le package est installé avant de faire l'upgrade
-- deploiement app test via Python
+- Automatisation de Firebase
