@@ -13,4 +13,3 @@ helm package --version $version ./app-chart
 
 gsutil mv app-chart-$version.tgz gs://charts-wescale-sandbox/app-chart/$version/app-chart-$version.tgz
 
-gsutil cp static/LP-Box.svg gs://lp-static-bucket-dev-seb/image.svg

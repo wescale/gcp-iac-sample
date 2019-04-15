@@ -25,3 +25,5 @@ variable "range-ip-pod" {
 variable "range-ip-svc" {
   default = "10.1.0.0/16"
 }
+
+variable "range-plateform" {}

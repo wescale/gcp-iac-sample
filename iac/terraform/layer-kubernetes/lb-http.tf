@@ -17,7 +17,7 @@ resource "google_compute_target_http_proxy" "lp-k8s-pool" {
 resource "google_compute_http_health_check" "lp-k8s-hc" {
   name               = "lp-k8s-hc-${terraform.workspace}"
   request_path       = "/healthz"
-  check_interval_sec = 1
+  check_interval_sec = 10
   timeout_sec        = 1
   port               = 32080
 }
@@ -57,7 +57,16 @@ resource "google_compute_backend_service" "lp-public-home" {
   //   }
 
   backend {
-    group = "${replace(element(google_container_node_pool.np-default.instance_group_urls, 1), "Manager", "")}"
+    group          = "${replace(element(google_container_node_pool.np-default.instance_group_urls, 1), "Manager", "")}"
+    balancing_mode = "UTILIZATION"
+  }
+  backend {
+    group          = "${replace(element(google_container_node_pool.np-default.instance_group_urls, 2), "Manager", "")}"
+    balancing_mode = "UTILIZATION"
+  }
+  backend {
+    group          = "${replace(element(google_container_node_pool.np-default.instance_group_urls, 3), "Manager", "")}"
+    balancing_mode = "UTILIZATION"
   }
   health_checks = ["${google_compute_http_health_check.lp-k8s-hc.self_link}"]
 }
@@ -73,4 +82,21 @@ resource "google_storage_bucket" "lp-static-bucket" {
   name          = "lp-static-bucket-${terraform.workspace}"
   location      = "${var.region}"
   force_destroy = true
+}
+
+resource "google_compute_firewall" "allow-hc-http-lb" {
+  name    = "allow-hc-http-lb-${terraform.workspace}"
+  network = "${data.terraform_remote_state.layer-base.lp-network-self-link}"
+
+  allow {
+    protocol = "icmp"
+  }
+
+  allow {
+    protocol = "tcp"
+    ports    = ["80", "443", "30000-33000"]
+  }
+
+  source_ranges = ["${data.terraform_remote_state.layer-base.range-plateform}"]
+  target_tags   = ["lp-cluster-${terraform.workspace}"]
 }

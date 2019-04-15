@@ -58,3 +58,13 @@ spec:
     app: webservice
     k8s-app: ws-deployment
   type: NodePort
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: basic-ingress
+  namespace: default
+spec:
+  backend:
+    serviceName: ws-service
+    servicePort: 8080

@@ -1,18 +1,13 @@
-applications:
-- documentation: http://swagger.io
-  name: app-a
-  namespace: webservices
-  version: 1.0.4
-- documentation: http://swagger.io
-  name: app-c
-  namespace: webservices
-  version: 2.0.3
-- documentation: http://swagger.io
-  name: app-b
-  namespace: gateways
-  version: 0.0.3
+name: prod
+region: europe-west3
+type: prod
 gcp-project: livingpackets-sandbox
 infrastructure:
+  range-ip: 10.0.16.0/20
+  range-ip-master: 10.0.0.0/28
+  range-ip-pod: 10.0.32.0/20
+  range-ip-svc: 10.0.48.0/20
+  range-plateform: 10.0.0.0/16
   cloudsql:
     disk-size: 20
     instance-num: xvmvfypfuv
@@ -34,10 +29,16 @@ infrastructure:
   - gateways
   - webservices
   - monitoring
-  range-ip: 10.0.16.0/20
-  range-ip-master: 10.0.0.0/28
-  range-ip-pod: 10.0.32.0/20
-  range-ip-svc: 10.0.48.0/20
-name: prod
-region: europe-west3
-type: prod
+applications:
+- documentation: http://swagger.io
+  name: app-a
+  namespace: webservices
+  version: 1.0.4
+- documentation: http://swagger.io
+  name: app-c
+  namespace: webservices
+  version: 2.0.3
+- documentation: http://swagger.io
+  name: app-b
+  namespace: gateways
+  version: 0.0.3

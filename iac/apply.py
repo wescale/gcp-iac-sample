@@ -63,6 +63,9 @@ with open("../plateform/manifests/"+name_file+".yaml", 'r') as stream:
             print("Helm apply for " + app['name'] + ", version:" + app['version'])
             deploy_helm(app['name'], app['version'], app['namespace'])
 
+        print('static assets:')
+        deploy_assets(plateform['name'])
+
     except yaml.YAMLError as exc:
         print(exc)
     except Exception as inst:

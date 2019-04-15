@@ -25,7 +25,8 @@ def create_base(plateform):
             'gcp-project': plateform['gcp-project'],
             'range-ip': plateform['infrastructure']['range-ip'],
             'range-ip-pod': plateform['infrastructure']['range-ip-pod'],
-            'range-ip-svc': plateform['infrastructure']['range-ip-svc']
+            'range-ip-svc': plateform['infrastructure']['range-ip-svc'],
+            'range-plateform': plateform['infrastructure']['range-plateform']
         }, 
         capture_output=False, 
         no_color=IsNotFlagged, 
@@ -141,3 +142,7 @@ def delete_data(plateform, user1_password, user2_password, unique_id):
 
     if code != 0:
         raise Exception("error in Terraform layer-data")
+
+
+def deploy_assets(name):
+    subprocess.call(["scripts/deploy-statics.sh", name])
