@@ -1,4 +1,4 @@
-module "https://gitlab.livingpackets.com/it/sandbox/wescale-sandbox/app"
+module "app"
 
 require (
 	github.com/gorilla/handlers v1.4.0 // indirect

@@ -1,4 +1,4 @@
-from python_terraform import *
+from python_terraform import Terraform, IsNotFlagged, IsFlagged
 import subprocess
 import base64
 

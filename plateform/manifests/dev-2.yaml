@@ -1,13 +1,14 @@
-name: dev-3
-gcp-project: livingpackets-sandbox
+name: dev-2
+gcp-project: slavayssiere-sandbox
 region: europe-west3
 type: dev
 infrastructure:
   version: 0.0.1
-  range-ip: 192.168.0.0/20
-  range-ip-pod: 10.0.0.0/16
-  range-ip-svc: 10.1.0.0/16
-  range-plateform: 10.12.0.0/16
+  range-ip: 10.0.16.0/20
+  range-ip-master: 10.0.0.0/28
+  range-ip-pod: 10.0.32.0/20
+  range-ip-svc: 10.0.48.0/20
+  range-plateform: 10.0.0.0/16
   cloudsql:
     version: MYSQL_5_7
     instance-type: "db-f1-micro"
@@ -15,7 +16,7 @@ infrastructure:
   gke:
     instance-type: n1-standard-1
     ips_whitelist:
-    - 37.173.210.210/32
+    - 37.173.210.210
     max: 30
     min: 3
     preemptible: true

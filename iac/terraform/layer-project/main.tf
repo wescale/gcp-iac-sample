@@ -4,7 +4,7 @@ provider "google" {
 }
 
 variable "gcp-project" {
-  default = "livingpackets-sandbox"
+  default = "slavayssiere-sandbox"
 }
 
 variable "region" {

@@ -1,7 +1,7 @@
 name: prod
 region: europe-west3
 type: prod
-gcp-project: livingpackets-sandbox
+gcp-project: slavayssiere-sandbox
 infrastructure:
   range-ip: 10.0.16.0/20
   range-ip-master: 10.0.0.0/28

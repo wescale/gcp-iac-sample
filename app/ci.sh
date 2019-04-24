@@ -3,8 +3,8 @@
 version=$1
 
 cd src
-docker build -t eu.gcr.io/livingpackets-sandbox/app:$version .
-docker push eu.gcr.io/livingpackets-sandbox/app:$version
+docker build -t eu.gcr.io/slavayssiere-sandbox/app:$version .
+docker push eu.gcr.io/slavayssiere-sandbox/app:$version
 cd -
 
 helm install --dry-run --debug ./app-chart

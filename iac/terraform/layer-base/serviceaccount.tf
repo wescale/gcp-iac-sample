@@ -4,7 +4,18 @@ resource "google_service_account" "app_a" {
 }
 
 resource "google_service_account_key" "app_a_key" {
+  depends_on = ["google_service_account_iam_binding.app_a_iam"]
+
   service_account_id = "${google_service_account.app_a.name}"
+}
+
+resource "google_service_account_iam_binding" "app_a_iam" {
+  service_account_id = "${google_service_account.app_a.name}"
+  role               = "roles/iam.serviceAccountKeys.get"
+
+  members = [
+    "serviceAccount:${google_service_account.app_a.email}",
+  ]
 }
 
 // data "google_iam_policy" "app_a_policy" {

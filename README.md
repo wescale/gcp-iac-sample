@@ -4,7 +4,7 @@
 
 - Terraform v0.11
 - Python 3.6
-- Gcloud 
+- Gcloud
 - kubectl
 
 ### Installation des dépendances Python
@@ -19,21 +19,21 @@ pip install -r requirements.txt
 
 Dans ce repository git vous trouverez la structure suivante:
 
-- <b>"app"</b>: l'application simple en Go permettant de tester cette infrastructure et son outillage de CI/CD
-    - <b>"src"</b>: code source de l'application
-    - <b>"app-chart"</b>: chart Helm permettant de déploiement de l'application
-    - <b>"static"</b>: une dépendance static de la stack à déployer
-    - <b>"ci.sh"</b> et <b>"cd.sh"</b>: les scripts à lancer par l'usine
-- <b>"docs"</b>: reprend la documentation explicative de ce POC et du workshop
-- <b>"iac"</b>: le code pour la création de l'infrastructure (Terraform + Kubernetes)
-    - <b>"kubernetes"</b>: installation des dépendances de Kubernetes
-    - <b>"scripts"</b>: des scripts bash pour des besoins spécifiques
-    - <b>"terraform"</b>: contient l'ensemble des layers Terraform
-- <b>"plateform"</b>: un exemple de manifest d'une plateforme
+- **"app"**: l'application simple en Go permettant de tester cette infrastructure et son outillage de CI/CD
+  - **"src"**: code source de l'application
+  - **"app-chart"**: chart Helm permettant de déploiement de l'application
+  - **"static"**: une dépendance static de la stack à déployer
+  - **"ci.sh"** et **"cd.sh"**: les scripts à lancer par l'usine
+- **"docs"**: reprend la documentation explicative de ce POC et du workshop
+- **"iac"**: le code pour la création de l'infrastructure (Terraform + Kubernetes)
+  - **"kubernetes"**: installation des dépendances de Kubernetes
+  - **"scripts"**: des scripts bash pour des besoins spécifiques
+  - **"terraform"**: contient l'ensemble des layers Terraform
+- **"plateform"**: un exemple de manifest d'une plateforme
 
 ## Architecture
 
-![](docs/img/Architecture.png)
+![Architecture.png](docs/img/Architecture.png)
 
 Quelques points importants de cette infrastructure:
 
@@ -44,7 +44,7 @@ Quelques points importants de cette infrastructure:
 
 ## IaC
 
-![](docs/img/IaC-schema.png)
+![IaC-schema.png](docs/img/IaC-schema.png)
 
 Le principe de cette infrastructure est de décrire l'infrastructure dans un "manifest" en YAML.
 
@@ -87,7 +87,7 @@ Dans ce layer les éléments suivants sont créés:
 - VPC
 - Subnet
 - Router NAT
-- Private DNS 
+- Private DNS
 - Peering vers "servicenetworking.googleapis.com" pour CloudSQL
 - Service account
 
@@ -119,14 +119,14 @@ Pour Kubernetes il faut installer:
 
 ## Continuous Integration
 
-![](docs/img/CI-schema.png)
+![CI-schema.png](docs/img/CI-schema.png)
 
 Le schéma final avec l'ensemble des étapes du pipeline de Build.
 Quelques explications ci dessous qui décrive ce fichier [app/ci.sh](app/ci.sh)
 
 ### tests
 
-Les tests ne faisaient pas partie du périmètre de ce POC. 
+Les tests ne faisaient pas partie du périmètre de ce POC.
 Il faudra les ajouter par la suite.
 
 Un test à minima qui peut être mis en place pour tester le packaging Helm est l'exécution de ces commandes.
@@ -139,13 +139,13 @@ helm lint ./app/app-chart
 ### compilation
 
 ```language-bash
-docker build -t eu.gcr.io/livingpackets-sandbox/app:$version ./app/src/
+docker build -t eu.gcr.io/slavayssiere-sandbox/app:$version ./app/src/
 ```
 
 ### envoie dans GCR
 
 ```language-bash
-docker push eu.gcr.io/livingpackets-sandbox/app:$version
+docker push eu.gcr.io/slavayssiere-sandbox/app:$version
 ```
 
 ### packaging Helm
@@ -157,7 +157,7 @@ gsutil mv app-chart-$version.tgz gs://charts-wescale-sandbox/app-chart/$version/
 
 ## Continuous Delivery
 
-![](docs/img/ContinuousDelivery-schema.png)
+![ContinuousDelivery-schema.png](docs/img/ContinuousDelivery-schema.png)
 
 L'objectif de cette étape est de déployer une application dans une plateforme.
 
@@ -171,7 +171,7 @@ Pour cela il est possible d'utiliser:
 Il faut commencer par télécharger le Chart depuis GCS puis mettre à jour.
 
 ```language-bash
-gsutil cp gs://charts-wescale-sandbox/app-chart/$version/app-chart-$version.tgz app-chart-$version.tgz 
+gsutil cp gs://charts-wescale-sandbox/app-chart/$version/app-chart-$version.tgz app-chart-$version.tgz
 helm upgrade test-app app-chart-$version.tgz --set image.tag=$version
 ```
 

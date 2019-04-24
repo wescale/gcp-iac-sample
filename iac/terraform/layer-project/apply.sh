@@ -3,7 +3,7 @@
 echo "Create plateform... layer-project"
 
 REGION="europe-west3"
-GCP_PROJECT="livingpackets-sandbox"
+GCP_PROJECT="slavayssiere-sandbox"
 
 terraform apply \
     --var "region=$REGION" \

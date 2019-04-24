@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: webservice
-        image: eu.gcr.io/livingpackets-sandbox/app:0.0.3
+        image: eu.gcr.io/slavayssiere-sandbox/app:0.0.3
         env:
         - name: PREFIX_PATH
           value: /

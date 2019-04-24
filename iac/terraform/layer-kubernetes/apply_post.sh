@@ -11,8 +11,8 @@ fi
 echo "Create $workspace plateform... layer-kubernetes"
 
 
-ig=$(gcloud compute instance-groups list --project livingpackets-sandbox --project $GCP_PROJECT | grep np-default | cut -d ' ' -f1)
-az=$(gcloud compute instance-groups list --project livingpackets-sandbox --project $GCP_PROJECT | grep np-default | cut -d ' ' -f3)
+ig=$(gcloud compute instance-groups list --project slavayssiere-sandbox --project $GCP_PROJECT | grep np-default | cut -d ' ' -f1)
+az=$(gcloud compute instance-groups list --project slavayssiere-sandbox --project $GCP_PROJECT | grep np-default | cut -d ' ' -f3)
 ig_array=( $ig )
 az_array=( $az )
 it=0

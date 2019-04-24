@@ -84,7 +84,7 @@ resource "google_compute_target_http_proxy" "lp-k8s-pool" {
 ```
 
 Dans le cadre d'un LB HTTP il faut définir un contrôle d'état.
-Dans ce cas on expose un service "test" sur un NodePort définit à 32080. 
+Dans ce cas on expose un service "test" sur un NodePort définit à 32080.
 
 ```language-terraform
 resource "google_compute_http_health_check" "lp-k8s-hc" {
@@ -140,7 +140,7 @@ C'est l'objectif de ce script: [iac/terraform/layer-kubernetes/apply_post.sh](ia
 On commence par obtenir la liste des groupes d'instances.
 
 ```language-bash
-ig=$(gcloud compute instance-groups list --project livingpackets-sandbox --project $GCP_PROJECT | grep np-default | cut -d ' ' -f1)
+ig=$(gcloud compute instance-groups list --project slavayssiere-sandbox --project $GCP_PROJECT | grep np-default | cut -d ' ' -f1)
 ```
 
 Pour chacune des instances groupes on utilise une commande gcloud pour nommer le port.
@@ -149,5 +149,5 @@ Pour chacune des instances groupes on utilise une commande gcloud pour nommer le
 for...
 do
     gcloud compute instance-groups set-named-ports $i --named-ports=http:32080 --project $GCP_PROJECT --zone ${az_array[$it]}
-done 
+done
 ```

@@ -10,7 +10,7 @@ fi
 echo "Create $workspace plateform... layer-data"
 
 REGION="europe-west3"
-GCP_PROJECT="livingpackets-sandbox"
+GCP_PROJECT="slavayssiere-sandbox"
 DB_VERSION="MYSQL_5_6"
 USER_PASS="testme"
 # UNIQUE_ID=$(openssl rand -base64 9  | tr -d -c ".[:alnum:]" | tr [A-Z] [a-z])

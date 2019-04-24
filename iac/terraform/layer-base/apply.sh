@@ -10,7 +10,7 @@ fi
 echo "Create $workspace plateform... layer-base"
 
 REGION="europe-west3"
-GCP_PROJECT="livingpackets-sandbox"
+GCP_PROJECT="slavayssiere-sandbox"
 
 terraform workspace select $workspace
 terraform apply \

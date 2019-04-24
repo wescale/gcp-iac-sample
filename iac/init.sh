@@ -1,3 +1,3 @@
 #!/bin/bash
 
-gcloud config set core/account livingpackets-sandbox
+gcloud config set core/account slavayssiere-sandbox
