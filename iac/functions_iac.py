@@ -158,3 +158,6 @@ def delete_data(plateform, user1_password, user2_password, unique_id):
 
 def deploy_assets(name):
     subprocess.call(["scripts/deploy-statics.sh", name])
+
+def delete_tfstate(name):
+    subprocess.call(["scripts/destroy-gcs.sh", name])

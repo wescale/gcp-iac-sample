@@ -8,7 +8,7 @@ variable "gcp-project" {
 }
 
 variable "region" {
-  default = "europe-west3"
+  default = "europe-west1"
 }
 
 terraform {
