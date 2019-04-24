@@ -10,20 +10,15 @@ terraform {
   }
 }
 
-data "terraform_remote_state" "layer-project" {
-  backend = "gcs"
+variable "remote_bucket" {}
 
-  config {
-    bucket = "tf-wescale-sandbox"
-    prefix = "terraform/layer-project"
-  }
-}
+variable "prefix_bucket" {}
 
 data "terraform_remote_state" "layer-base" {
   backend = "gcs"
 
   config {
-    bucket = "tf-wescale-sandbox"
-    path   = "terraform/layer-base/${terraform.workspace}.tfstate"
+    bucket = "${var.remote_bucket}"
+    path   = "${var.prefix_bucket}/layer-base/${terraform.workspace}.tfstate"
   }
 }

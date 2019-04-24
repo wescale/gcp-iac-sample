@@ -10,7 +10,6 @@ infrastructure:
   range-plateform: 10.0.0.0/16
   cloudsql:
     disk-size: 20
-    instance-num: xvmvfypfuv
     instance-type: db-f1-micro
     version: MYSQL_5_7
   dependancies:

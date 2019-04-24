@@ -14,12 +14,3 @@ terraform {
     prefix = "terraform/layer-base"
   }
 }
-
-data "terraform_remote_state" "layer-project" {
-  backend = "gcs"
-
-  config {
-    bucket = "tf-wescale-sandbox"
-    prefix = "terraform/layer-project"
-  }
-}

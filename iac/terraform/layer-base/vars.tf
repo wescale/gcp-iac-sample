@@ -14,9 +14,7 @@ variable "svc-net-name" {
   default = "c0-services"
 }
 
-variable "range-ip" {
-  default = "192.168.0.0/20"
-}
+variable "range-ip" {}
 
 variable "range-ip-pod" {
   default = "10.0.0.0/16"
