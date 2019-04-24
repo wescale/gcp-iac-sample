@@ -4,8 +4,13 @@ import yaml
 from functions_iac import create_base, create_kubernetes, create_data, get_service_account, deploy_assets
 from functions_k8s import connect_gke, create_namespace, get_secret, save_secrets, apply_kubernetes, deploy_helm
 from utils_iac import randomString
+import sys
 
-name_file = raw_input("Nom du fichier: ")
+if len(sys.argv) > 1:
+    name_file = sys.argv[1]
+    print("create from file: ../plateform/manifests/"+name_file+".yaml")
+else:
+    name_file = raw_input("Nom du fichier: ")
 
 with open("../plateform/manifests/"+name_file+".yaml", 'r') as stream:
     try:

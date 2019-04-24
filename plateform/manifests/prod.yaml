@@ -2,6 +2,8 @@ name: prod
 region: europe-west1
 type: prod
 gcp-project: slavayssiere-sandbox
+remote-bucket: tf-slavayssiere-wescale
+prefix-bucket: gcp-sample-iac
 infrastructure:
   range-ip: 10.0.16.0/20
   range-ip-master: 10.0.0.0/28
@@ -28,6 +30,7 @@ infrastructure:
   - gateways
   - webservices
   - monitoring
+  - public-ingress-controller
 applications:
 - documentation: http://swagger.io
   name: app-a

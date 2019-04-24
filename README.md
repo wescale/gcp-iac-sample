@@ -238,4 +238,5 @@ Renseigner le nom du fichier, ici "dev-2"
 - CloudFunction
 - Monitoring des plateformes
 - installation de CertManager
-- Automatisation de Firebase
+
+- Changer le healthcheak vers le default app vers Traefik (public): /ping et 31080
