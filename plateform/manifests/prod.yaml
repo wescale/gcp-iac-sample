@@ -1,5 +1,5 @@
 name: prod
-region: europe-west3
+region: europe-west1
 type: prod
 gcp-project: slavayssiere-sandbox
 infrastructure:

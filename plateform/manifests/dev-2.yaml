@@ -1,6 +1,6 @@
 name: dev-2
 gcp-project: slavayssiere-sandbox
-region: europe-west3
+region: europe-west1
 type: dev
 infrastructure:
   version: 0.0.1
