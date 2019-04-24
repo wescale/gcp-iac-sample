@@ -21,6 +21,8 @@ def create_base(plateform):
     code, _, _ = tf.apply(
         var={
             'region': plateform['region'], 
+            'remote_bucket': plateform['remote-bucket'],
+            'prefix_bucket': plateform['prefix-bucket'],
             'gcp-project': plateform['gcp-project'],
             'range-ip': plateform['infrastructure']['range-ip'],
             'range-ip-pod': plateform['infrastructure']['range-ip-pod'],
@@ -40,6 +42,8 @@ def delete_base(plateform):
     code, _, _ = tf.destroy(
         var={
             'region': plateform['region'], 
+            'remote_bucket': plateform['remote-bucket'],
+            'prefix_bucket': plateform['prefix-bucket'],
             'gcp-project': plateform['gcp-project'],
             'range-ip': plateform['infrastructure']['range-ip'],
             'range-ip-pod': plateform['infrastructure']['range-ip-pod'],
@@ -62,6 +66,8 @@ def create_kubernetes(plateform):
     code, _, _ = tf.apply(
         var={
             'region': plateform['region'], 
+            'remote_bucket': plateform['remote-bucket'],
+            'prefix_bucket': plateform['prefix-bucket'],
             'gcp-project': plateform['gcp-project'],
             'k8s-version': plateform['infrastructure']['gke']['version'],
             'preemptible': plateform['infrastructure']['gke']['preemptible'],
@@ -89,6 +95,8 @@ def delete_kubernetes(plateform):
     code, _, _ = tf.destroy(
         var={
             'region': plateform['region'], 
+            'remote_bucket': plateform['remote-bucket'],
+            'prefix_bucket': plateform['prefix-bucket'],
             'gcp-project': plateform['gcp-project'],
             'k8s-version': plateform['infrastructure']['gke']['version'],
             'preemptible': plateform['infrastructure']['gke']['preemptible'],
@@ -115,6 +123,8 @@ def create_data(plateform, user1_password, user2_password, unique_id):
     code, _, _ = tf.apply(
         var={
             'region': plateform['region'], 
+            'remote_bucket': plateform['remote-bucket'],
+            'prefix_bucket': plateform['prefix-bucket'],
             'gcp-project': plateform['gcp-project'],
             'database_version': plateform['infrastructure']['cloudsql']['version'],
             'database_instance_type': plateform['infrastructure']['cloudsql']['instance-type'],
@@ -138,6 +148,8 @@ def delete_data(plateform, user1_password, user2_password, unique_id):
     code, _, _ = tf.destroy(
         var={
             'region': plateform['region'], 
+            'remote_bucket': plateform['remote-bucket'],
+            'prefix_bucket': plateform['prefix-bucket'],
             'gcp-project': plateform['gcp-project'],
             'database_version': plateform['infrastructure']['cloudsql']['version'],
             'database_instance_type': plateform['infrastructure']['cloudsql']['instance-type'],

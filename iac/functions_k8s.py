@@ -16,7 +16,7 @@ def create_namespace(name):
     body = client.V1Namespace(metadata=client.V1ObjectMeta(name=name)) # V1Namespace | 
     
     try: 
-        api_response = api_instance.create_namespace(body)
+        api_instance.create_namespace(body)
     except ApiException as e:
         # print("Exception when calling CoreV1Api->create_namespace: %s\n" % e)
         if e.status == 409:
@@ -40,7 +40,7 @@ def save_secrets(user1_password, user2_password, sa_key):
     }
     body.type = "Opaque" 
     try:
-        api_response = api_instance.create_namespaced_secret(body=body, namespace='webservices')
+        api_instance.create_namespaced_secret(body=body, namespace='webservices')
     except ApiException as e:
         # print("Exception when calling CoreV1Api->create_namespaced_secret: %s\n" % e)
         if e.status == 409:
@@ -56,7 +56,7 @@ def save_secrets(user1_password, user2_password, sa_key):
     }
     body.type = "Opaque"
     try:
-        api_response = api_instance.create_namespaced_secret(body=body, namespace='webservices')
+        api_instance.create_namespaced_secret(body=body, namespace='webservices')
     except ApiException as e:
         # print("Exception when calling CoreV1Api->create_namespaced_secret: %s\n" % e)
         if e.status == 409:
@@ -70,7 +70,7 @@ def save_secrets(user1_password, user2_password, sa_key):
     body.data = {"sa-key": base64.b64encode(sa_key)}
     body.type = "Opaque"
     try:
-        api_response = api_instance.create_namespaced_secret(body=body, namespace='webservices')
+        api_instance.create_namespaced_secret(body=body, namespace='webservices')
     except ApiException as e:
         # print("Exception when calling CoreV1Api->create_namespaced_secret: %s\n" % e)
         if e.status == 409:
