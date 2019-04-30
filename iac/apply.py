@@ -2,7 +2,7 @@
 
 import yaml
 from functions_iac import create_base, create_kubernetes, create_data, get_service_account, deploy_assets
-from functions_k8s import connect_gke, create_namespace, get_secret, save_secrets, apply_kubernetes, deploy_helm
+from functions_k8s import connect_gke, create_namespace, get_secret, save_secrets, apply_kubernetes, deploy_helm, wait_cluster_if_exist
 from utils_iac import randomString
 import sys
 
@@ -26,6 +26,8 @@ with open("../plateform/manifests/"+name_file+".yaml", 'r') as stream:
         create_base(plateform)
 
         if "gke" in plateform['infrastructure']:
+            wait_cluster_if_exist(plateform)
+
             print("Layer-kubernetes...")
             create_kubernetes(plateform)
 

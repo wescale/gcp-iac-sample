@@ -99,3 +99,7 @@ def get_secret():
 
 def deploy_helm(name, version, namespace):
     subprocess.call(["scripts/deploy-app-helm.sh", name, version, namespace])
+
+def wait_cluster_if_exist(plateform):
+    subprocess.call(["scripts/wait-master.sh", "lp-cluster-" + plateform['name'], plateform['region']])
+
