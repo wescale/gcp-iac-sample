@@ -11,8 +11,28 @@ resource "google_container_cluster" "lp-cluster" {
 
   master_authorized_networks_config {
     cidr_blocks {
-      cidr_block   = "${var.myip}/32"
-      display_name = "dyn"
+      cidr_block   = "${var.white-ip-1}"
+      display_name = "white-ip-1"
+    }
+
+    cidr_blocks {
+      cidr_block   = "${var.white-ip-2}"
+      display_name = "white-ip-2"
+    }
+
+    cidr_blocks {
+      cidr_block   = "${var.white-ip-3}"
+      display_name = "white-ip-3"
+    }
+
+    cidr_blocks {
+      cidr_block   = "${var.white-ip-4}"
+      display_name = "white-ip-4"
+    }
+
+    cidr_blocks {
+      cidr_block   = "${var.white-ip-5}"
+      display_name = "white-ip-5"
     }
 
     cidr_blocks {
@@ -24,8 +44,8 @@ resource "google_container_cluster" "lp-cluster" {
   min_master_version = "${var.k8s-version}"
   node_version       = "${var.k8s-version}"
 
-  network    = "${data.terraform_remote_state.layer-base.lp-network-self-link}"
-  subnetwork = "${data.terraform_remote_state.layer-base.lp-sub-network-self-link}"
+  network    = "https://www.googleapis.com/compute/v1/${data.terraform_remote_state.layer-base.lp-network-self-link}"
+  subnetwork = "https://www.googleapis.com/compute/v1/${data.terraform_remote_state.layer-base.lp-sub-network-self-link}"
 
   addons_config {
     kubernetes_dashboard {

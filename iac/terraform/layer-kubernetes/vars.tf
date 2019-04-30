@@ -6,7 +6,25 @@ variable "region" {
   default = "europe-west3"
 }
 
-variable "myip" {}
+variable "white-ip-1" {
+  default = "81.250.133.68/32"
+}
+
+variable "white-ip-2" {
+  default = "81.250.133.68/32"
+}
+
+variable "white-ip-3" {
+  default = "81.250.133.68/32"
+}
+
+variable "white-ip-4" {
+  default = "81.250.133.68/32"
+}
+
+variable "white-ip-5" {
+  default = "81.250.133.68/32"
+}
 
 variable "k8s-version" {
   default = "1.12.5-gke.5"

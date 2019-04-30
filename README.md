@@ -74,6 +74,12 @@ Le manifest décrit une platefome et permet d'appeler les éléments d'IaC à pa
 
 Pour aller plus loin avec le manifest: [docs/manifest.MD](docs/manifest.MD)
 
+#### Limitations connues
+
+- seuleument 4 addresses IP sont possible dans la liste des IPs autorisées
+- uniquement en /32 pour le moment
+- la derniere IP ajouté est l'IP public utilisé par ce script
+
 ### layer-project
 
 Ce layer est le seul à ne pas être exécuté à chaque création de plateforme.
