@@ -11,13 +11,13 @@ rbac:
 serviceAccount:
   etcdOperatorServiceAccount:
     create: true
-    name:
+    name: etcd-operator
   backupOperatorServiceAccount:
     create: true
-    name:
+    name: etcd-backup-operator
   restoreOperatorServiceAccount:
     create: true
-    name:
+    name: etcd-restore-operator
 
 # Select what to deploy
 deployments:
@@ -43,7 +43,7 @@ etcdOperator:
   replicaCount: 1
   image:
     repository: quay.io/coreos/etcd-operator
-    tag: v0.9.3
+    tag: v0.9.4
     pullPolicy: Always
   resources:
     cpu: 100m

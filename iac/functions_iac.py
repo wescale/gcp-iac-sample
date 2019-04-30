@@ -198,7 +198,49 @@ def delete_data(plateform, user1_password, user2_password, unique_id):
     if code != 0:
         raise Exception("error in Terraform layer-data")
 
+def create_bastion(plateform):
+    tf = Terraform(working_dir='terraform/layer-bastion')
+    code, _, _ = tf.cmd("workspace select " + plateform['name'], capture_output=False, no_color=IsNotFlagged, skip_plan=IsNotFlagged)
+    if code == 1:
+        tf.cmd("workspace new " + plateform['name'], capture_output=False, no_color=IsNotFlagged, skip_plan=IsNotFlagged)
+    code, _, _ = tf.apply(
+        var={
+            'region': plateform['region'], 
+            'remote_bucket': plateform['remote-bucket'],
+            'prefix_bucket': plateform['prefix-bucket'],
+            'gcp-project': plateform['gcp-project'],
+            'instance_type': plateform['infrastructure']['bastion']['instance-type'],
+            'instance_image': plateform['infrastructure']['bastion']['image'],
+        }, 
+        capture_output=False, 
+        no_color=IsNotFlagged, 
+        skip_plan=IsNotFlagged,
+        auto_approve=True)
 
+    if code != 0:
+        raise Exception("error in Terraform layer-data")
+    
+
+def delete_bastion(plateform):
+    tf = Terraform(working_dir='terraform/layer-bastion')
+    code, _, _ = tf.cmd("workspace select " + plateform['name'], capture_output=False, no_color=IsNotFlagged, skip_plan=IsNotFlagged)
+    code, _, _ = tf.destroy(
+        var={
+            'region': plateform['region'], 
+            'remote_bucket': plateform['remote-bucket'],
+            'prefix_bucket': plateform['prefix-bucket'],
+            'gcp-project': plateform['gcp-project'],
+            'instance_type': plateform['infrastructure']['bastion']['instance-type'],
+            'instance_image': plateform['infrastructure']['bastion']['image'],
+        }, 
+        capture_output=False, 
+        no_color=IsNotFlagged, 
+        skip_plan=IsNotFlagged,
+        auto_approve=True)
+
+    if code != 0:
+        raise Exception("error in Terraform layer-data")
+    
 def deploy_assets(name):
     subprocess.call(["scripts/deploy-statics.sh", name])
 

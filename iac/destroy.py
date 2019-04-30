@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import yaml
-from functions_iac import delete_kubernetes, delete_data, delete_base, delete_tfstate
+from functions_iac import delete_kubernetes, delete_data, delete_base, delete_tfstate, delete_bastion
 import sys
 
 if len(sys.argv) > 1:
@@ -20,6 +20,11 @@ with open("../plateform/manifests/"+name_file+".yaml", 'r') as stream:
         if "gke" in plateform['infrastructure']:
             print("Layer-kubernetes...")
             delete_kubernetes(plateform)
+
+
+        if "bastion" in plateform['infrastructure']:
+            print("Layer-bastion...")
+            delete_bastion(plateform)
 
         if 'cloudsql' in plateform['infrastructure']:
             print("Layer-data...")

@@ -2,6 +2,26 @@ resource "google_compute_global_address" "lb-public-ip" {
   name = "lb-public-ip-${terraform.workspace}"
 }
 
+resource "google_dns_record_set" "lp-a-public" {
+  name = "public-ic.${data.terraform_remote_state.layer-base.dns-public-zone}"
+  type = "A"
+  ttl  = 300
+
+  managed_zone = "${data.terraform_remote_state.layer-base.dns-public-zone-name}"
+
+  rrdatas = ["${google_compute_global_address.lb-public-ip.address}"]
+}
+
+resource "google_dns_record_set" "lp-a-private" {
+  name = "private-ic.${data.terraform_remote_state.layer-base.dns-public-zone}"
+  type = "A"
+  ttl  = 300
+
+  managed_zone = "${data.terraform_remote_state.layer-base.dns-public-zone-name}"
+
+  rrdatas = ["${google_compute_global_address.lb-public-ip.address}"]
+}
+
 resource "google_compute_global_forwarding_rule" "lp-public-lb-http" {
   name       = "lp-public-lb-http-${terraform.workspace}"
   target     = "${google_compute_target_http_proxy.lp-k8s-pool.self_link}"
@@ -16,10 +36,10 @@ resource "google_compute_target_http_proxy" "lp-k8s-pool" {
 
 resource "google_compute_http_health_check" "lp-k8s-hc" {
   name               = "lp-k8s-hc-${terraform.workspace}"
-  request_path       = "/healthz"
+  request_path       = "/ping"
   check_interval_sec = 10
   timeout_sec        = 1
-  port               = 32080
+  port               = 31080
 }
 
 resource "google_compute_url_map" "lb-urlmap" {

@@ -19,7 +19,7 @@ startupArguments:
 
 podDisruptionBudget:
   maxUnavailable: 1
-  minAvailable: 2
+  # minAvailable: 2
 
 # priorityClassName: ""
 
@@ -125,11 +125,11 @@ kvprovider:
   storeAcme: false
   importAcme: false
 
-  # etcd:
-    # endpoint: etcd-service:2379
-    # useAPIV3: false
-    # watch: true
-    # prefix: traefik
+  etcd:
+    endpoint: etcd-backend-client:2379
+    useAPIV3: true
+    watch: true
+    prefix: traefik
 
     ## Override default configuration template.
     ## For advanced users :)
@@ -302,12 +302,12 @@ acme:
     ##
     # existingClaim:
 dashboard:
-  enabled: false
-  domain: traefik.example.com
+  enabled: true
+  domain: ""
   # serviceType: ClusterIP
-  service: {}
+  # service: 
     # annotations:
-    #   key: value
+    #  key: value
   ingress: {}
     # annotations:
     #   key: value
@@ -355,7 +355,7 @@ accessLogs:
       names: {}
         # Authorization: redact
 rbac:
-  enabled: false
+  enabled: true
 ## Enable the /metrics endpoint, for now only supports prometheus
 ## set to true to enable metric collection by prometheus
 metrics:
@@ -408,18 +408,18 @@ tracing:
 
 ## Create HorizontalPodAutoscaler object.
 ##
-# autoscaling:
-#   minReplicas: 1
-#   maxReplicas: 10
-#   metrics:
-#   - type: Resource
-#     resource:
-#       name: cpu
-#       targetAverageUtilization: 60
-#   - type: Resource
-#     resource:
-#       name: memory
-#       targetAverageUtilization: 60
+autoscaling:
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      targetAverageUtilization: 60
+  - type: Resource
+    resource:
+      name: memory
+      targetAverageUtilization: 60
 
 ## Timeouts
 ##

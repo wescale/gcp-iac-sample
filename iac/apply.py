@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import yaml
-from functions_iac import create_base, create_kubernetes, create_data, get_service_account, deploy_assets
+from functions_iac import create_base, create_kubernetes, create_data, get_service_account, deploy_assets, create_bastion
 from functions_k8s import connect_gke, create_namespace, get_secret, save_secrets, apply_kubernetes, deploy_helm, wait_cluster_if_exist
 from utils_iac import randomString
 import sys
@@ -19,9 +19,6 @@ with open("../plateform/manifests/"+name_file+".yaml", 'r') as stream:
 
         print("Create plateform with name: " + plateform['name'])
 
-        # print("Layer-project...")
-        # create_project()
-        
         print("Layer-base...")
         create_base(plateform)
 
@@ -38,6 +35,10 @@ with open("../plateform/manifests/"+name_file+".yaml", 'r') as stream:
                 create_namespace(name)
         else:
             print("Layer-kubernetes skip !")
+
+        if "bastion" in plateform['infrastructure']:
+            print("Layer-bastion...")
+            create_bastion(plateform)
 
         if 'cloudsql' in plateform['infrastructure']:
             print("Layer-data...")
@@ -68,7 +69,6 @@ with open("../plateform/manifests/"+name_file+".yaml", 'r') as stream:
 
         else:
             print("Layer-data skip !")
-
 
         apply_kubernetes(plateform)
 
