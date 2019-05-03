@@ -2,6 +2,8 @@ name: dev-2
 gcp-project: slavayssiere-sandbox
 region: europe-west1
 type: dev
+remote-bucket: tf-slavayssiere-wescale
+prefix-bucket: gcp-sample-iac
 infrastructure:
   version: 0.0.1
   range-ip: 10.0.16.0/20
