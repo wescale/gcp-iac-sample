@@ -125,11 +125,11 @@ kvprovider:
   storeAcme: false
   importAcme: false
 
-  etcd:
-    endpoint: etcd-backend-client:2379
-    useAPIV3: true
-    watch: true
-    prefix: traefik
+  # etcd:
+  #   endpoint: etcd-backend-client:2379
+  #   useAPIV3: true
+  #   watch: true
+  #   prefix: traefik
 
     ## Override default configuration template.
     ## For advanced users :)
@@ -144,10 +144,10 @@ kvprovider:
     #   key: "/etc/ssl/consul.key"
     #   insecureSkipVerify: true
     #
-  # consul:
-    # endpoint: consul-service:8500
-    # watch: true
-    # prefix: traefik
+  consul:
+    endpoint: ingress-consul:8500
+    watch: true
+    prefix: traefik
 
     ## Override default configuration template.
     ## For advanced users :)
@@ -304,7 +304,7 @@ acme:
 dashboard:
   enabled: true
   domain: ""
-  # serviceType: ClusterIP
+  serviceType: ClusterIP
   # service: 
     # annotations:
     #  key: value

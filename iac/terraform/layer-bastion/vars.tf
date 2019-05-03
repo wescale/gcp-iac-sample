@@ -13,3 +13,7 @@ variable "instance_type" {
 variable "instance_image" {
   default = "debian-cloud/debian-9"
 }
+
+variable "preemptible" {
+  default = "false"
+}

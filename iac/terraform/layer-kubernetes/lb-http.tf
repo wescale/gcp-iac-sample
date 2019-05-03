@@ -2,26 +2,6 @@ resource "google_compute_global_address" "lb-public-ip" {
   name = "lb-public-ip-${terraform.workspace}"
 }
 
-resource "google_dns_record_set" "lp-a-public" {
-  name = "public-ic.${data.terraform_remote_state.layer-base.dns-public-zone}"
-  type = "A"
-  ttl  = 300
-
-  managed_zone = "${data.terraform_remote_state.layer-base.dns-public-zone-name}"
-
-  rrdatas = ["${google_compute_global_address.lb-public-ip.address}"]
-}
-
-resource "google_dns_record_set" "lp-a-private" {
-  name = "private-ic.${data.terraform_remote_state.layer-base.dns-public-zone}"
-  type = "A"
-  ttl  = 300
-
-  managed_zone = "${data.terraform_remote_state.layer-base.dns-public-zone-name}"
-
-  rrdatas = ["${google_compute_global_address.lb-public-ip.address}"]
-}
-
 resource "google_compute_global_forwarding_rule" "lp-public-lb-http" {
   name       = "lp-public-lb-http-${terraform.workspace}"
   target     = "${google_compute_target_http_proxy.lp-k8s-pool.self_link}"
@@ -53,6 +33,11 @@ resource "google_compute_url_map" "lb-urlmap" {
     path_matcher = "allpaths"
   }
 
+  host_rule {
+    hosts        = ["public-ic.${terraform.workspace}.gcp-wescale.slavayssiere.fr"]
+    path_matcher = "public-ic"
+  }
+
   path_matcher {
     name            = "allpaths"
     default_service = "${google_compute_backend_service.lp-public-home.self_link}"
@@ -61,6 +46,11 @@ resource "google_compute_url_map" "lb-urlmap" {
       paths   = ["/static"]
       service = "${google_compute_backend_bucket.lp-static.self_link}"
     }
+  }
+
+  path_matcher {
+    name            = "public-ic"
+    default_service = "${google_compute_backend_service.lp-public-home.self_link}"
   }
 }
 
@@ -109,14 +99,24 @@ resource "google_compute_firewall" "allow-hc-http-lb" {
   network = "${data.terraform_remote_state.layer-base.lp-network-self-link}"
 
   allow {
-    protocol = "icmp"
-  }
-
-  allow {
     protocol = "tcp"
     ports    = ["80", "443", "30000-33000"]
   }
 
   source_ranges = ["${data.terraform_remote_state.layer-base.range-plateform}"]
   target_tags   = ["lp-cluster-${terraform.workspace}"]
+}
+
+resource "google_compute_firewall" "allow-http-lb-to-gke" {
+  name      = "allow-http-lb-to-gke-${terraform.workspace}"
+  network   = "${data.terraform_remote_state.layer-base.lp-network-self-link}"
+  direction = "INGRESS"
+
+  allow {
+    protocol = "tcp"
+    ports    = ["31080"]
+  }
+
+  source_ranges = ["130.211.0.0/22", "35.191.0.0/16"]
+  target_tags   = ["kubernetes", "lp-cluster-${terraform.workspace}"]
 }

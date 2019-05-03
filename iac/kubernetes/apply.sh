@@ -11,35 +11,57 @@ then
     workspace="default"
 fi
 
+kubectl create clusterrolebinding cluster-admin-binding \
+  --clusterrole cluster-admin \
+  --user "$(gcloud config get-value core/account)"
+
 echo "Create $workspace plateform... kubernetes step"
 
 kubectl apply -f kubernetes/helm/rbac.yaml
 helm init --service-account tiller
 
-test_tiller=$(test_tiller_present)
-while [ $test_tiller -lt 1 ]; do
-    echo "Wait for Tiller: $test_tiller"
+echo "Helm install return: $?"
+if [ $? -ne 0 ]; then
     test_tiller=$(test_tiller_present)
-    sleep 1
-done
+    while [ $test_tiller -lt 1 ]; do
+        echo "Wait for Tiller: $test_tiller"
+        test_tiller=$(test_tiller_present)
+        sleep 1
+    done
 
-sleep 10
+    sleep 10
+else 
+    echo "Helm already install"
+fi
 
 # ExternalDNS
 # useless
 # kubectl apply  -f kubernetes/external-dns/public.yaml
 
-# ETCD operator
-#kubectl apply -f https://raw.githubusercontent.com/coreos/etcd-operator/master/example/deployment.yaml
-test=$(helm status ingress-etcd)
+# # ETCD operator
+# test=$(helm status ingress-etcd)
+# if [ $? -ne 0 ]; then
+#     kubectl create ns operators
+#     helm install stable/etcd-operator --name ingress-etcd --namespace operators -f kubernetes/etcd-operator/values.yaml --version 0.8.3
+# else
+#     echo "ECTD operator already install"
+# fi
+
+# until kubectl get crd etcdclusters.etcd.database.coreos.com
+# do
+#     echo "wait for CRD"
+#     sleep 5
+# done
+
+# kubectl apply -f kubernetes/etcd-operator/cluster.yaml
+
+# Consul
+test=$(helm status ingress-consul)
 if [ $? -ne 0 ]; then
-    kubectl create ns operators
-    # helm install stable/etcd-operator --name ingress-etcd --namespace operators -f kubernetes/etcd-operator/values.yaml --version 0.8.3
-    helm install stable/etcd-operator --name ingress-etcd --namespace operators --version 0.8.3
+    helm install --name ingress-consul --namespace ingress-controller stable/consul -f kubernetes/consul/values.yaml --set uiIngress.hosts={"consul.$workspace.gcp-wescale.slavayssiere.fr"}
 else
-    echo "ECTD operator already install"
+    echo "Consul already install"
 fi
-kubectl apply -f kubernetes/etcd-operator/cluster.yaml
 
 # Traefik IC
 test=$(helm status public-ic)
@@ -51,7 +73,8 @@ if [ $? -ne 0 ]; then
         --set imageTag=1.7.11 \
         --set dashboard.domain=public-ic.$workspace.gcp-wescale.slavayssiere.fr
 
-    kubectl -n ingress-controller annotate ing public-ic-traefik-dashboard "external-dns.alpha.kubernetes.io/hostname=public-ic.dev-2.gcp-wescale.slavayssiere.fr"
+    kubectl -n ingress-controller annotate ing public-ic-traefik-dashboard "external-dns.alpha.kubernetes.io/hostname=public-ic.$workspace.gcp-wescale.slavayssiere.fr"
+    kubectl -n ingress-controller patch ing ingress-consul-ui --type='json' -p='[{"op": "replace", "path": "/spec/rules/0/http/paths/0/backend/serviceName", "value":"public-ic-traefik-dashboard"}]'
 else
     echo "Public ingress already install"
 fi

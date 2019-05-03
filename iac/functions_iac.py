@@ -211,6 +211,7 @@ def create_bastion(plateform):
             'gcp-project': plateform['gcp-project'],
             'instance_type': plateform['infrastructure']['bastion']['instance-type'],
             'instance_image': plateform['infrastructure']['bastion']['image'],
+            'preemptible': plateform['infrastructure']['bastion']['preemptible'],
         }, 
         capture_output=False, 
         no_color=IsNotFlagged, 

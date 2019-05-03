@@ -85,14 +85,16 @@ def get_secret():
         api_response = api_instance.read_namespaced_secret(name='cloudsql-secrets-user1', namespace='webservices')
         password_user1 = base64.b64decode(api_response.data['password'])
     except ApiException as e:
-        print("Exception when calling CoreV1Api->read_secret: %s\n" % e)
+        # print("Exception when calling CoreV1Api->read_secret: %s\n" % e)
+        print("cloudsql-secrets-user1 already exist")
         password_user1 = randomString()
 
     try:
         api_response = api_instance.read_namespaced_secret(name='cloudsql-secrets-user2', namespace='webservices')
         password_user2 = base64.b64decode(api_response.data['password'])
     except ApiException as e:
-        print("Exception when calling CoreV1Api->read_secret: %s\n" % e)
+        # print("Exception when calling CoreV1Api->read_secret: %s\n" % e)
+        print("cloudsql-secrets-user2 already exist")
         password_user2 = randomString()
 
     return password_user1, password_user2

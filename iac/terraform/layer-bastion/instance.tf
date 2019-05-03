@@ -26,6 +26,11 @@ resource "google_compute_instance" "lp-bastion" {
     scopes = ["cloud-platform", "userinfo-email", "compute-ro", "storage-ro"]
   }
 
+  scheduling {
+    preemptible       = "${var.preemptible}"
+    automatic_restart = "false"
+  }
+
   metadata = {
     plateform = "${terraform.workspace}"
   }

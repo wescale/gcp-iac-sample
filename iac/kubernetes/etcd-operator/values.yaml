@@ -29,13 +29,6 @@ deployments:
   # Ref: https://github.com/coreos/etcd-operator/blob/master/doc/user/walkthrough/restore-operator.md
   restoreOperator: true
 
-# creates custom resources, not all required,
-# you could use `helm template --values <values.yaml> --name release_name ... `
-# and create the resources yourself to deploy on your cluster later
-customResources:
-  createEtcdClusterCRD: false
-  createBackupCRD: false
-  createRestoreCRD: false
 
 # etcdOperator
 etcdOperator:
@@ -43,7 +36,7 @@ etcdOperator:
   replicaCount: 1
   image:
     repository: quay.io/coreos/etcd-operator
-    tag: v0.9.3
+    tag: v0.9.4
     pullPolicy: Always
   resources:
     cpu: 100m
