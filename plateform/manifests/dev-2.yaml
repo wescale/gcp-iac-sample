@@ -9,6 +9,9 @@ infrastructure:
   range-ip-pod: 10.0.32.0/20
   range-ip-svc: 10.0.48.0/20
   range-plateform: 10.0.0.0/16
+  bastion:
+    image: debian-cloud/debian-9
+    instance-type: n1-standard-1
   cloudsql:
     version: MYSQL_5_7
     instance-type: "db-f1-micro"
