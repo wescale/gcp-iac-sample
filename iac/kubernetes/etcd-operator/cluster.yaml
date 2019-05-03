@@ -1,5 +1,5 @@
-apiVersion: etcd.database.coreos.com/v1beta2
-kind: EtcdCluster
+apiVersion: "etcd.database.coreos.com/v1beta2"
+kind: "EtcdCluster"
 metadata:
   name: etcd-backend
   namespace: ingress-controller
@@ -7,4 +7,14 @@ metadata:
      app: etcd-backend
 spec:
   size: 3
-  version: "3.1.8"
+  version: "3.2.13"
+  pod:
+    affinity:
+      podAntiAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+            - key: etcd_cluster
+              operator: In
+              values: ["etcd-backend"]
+          topologyKey: kubernetes.io/hostname

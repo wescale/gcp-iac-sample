@@ -14,6 +14,10 @@ output "lp-sub-network-self-link" {
   value = "${google_compute_subnetwork.lp-private-subnet.self_link}"
 }
 
+output "lp-sub-network-cidr" {
+  value = "${var.range-ip}"
+}
+
 output "pod-net-name" {
   value = "${var.pod-net-name}"
 }

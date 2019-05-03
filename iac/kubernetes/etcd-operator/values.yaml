@@ -11,13 +11,13 @@ rbac:
 serviceAccount:
   etcdOperatorServiceAccount:
     create: true
-    name: etcd-operator
+    name: etcd-operator-sa
   backupOperatorServiceAccount:
     create: true
-    name: etcd-backup-operator
+    name: etcd-backup-operator-sa
   restoreOperatorServiceAccount:
     create: true
-    name: etcd-restore-operator
+    name: etcd-restore-operator-sa
 
 # Select what to deploy
 deployments:
@@ -43,7 +43,7 @@ etcdOperator:
   replicaCount: 1
   image:
     repository: quay.io/coreos/etcd-operator
-    tag: v0.9.4
+    tag: v0.9.3
     pullPolicy: Always
   resources:
     cpu: 100m
@@ -116,37 +116,3 @@ restoreOperator:
   ## additional command arguments go here; will be translated to `--key=value` form
   ## e.g., analytics: true
   commandArgs: {}
-
-## etcd-cluster specific values
-etcdCluster:
-  name: etcd-cluster
-  size: 3
-  version: 3.2.25
-  image:
-    repository: quay.io/coreos/etcd
-    tag: v3.2.25
-    pullPolicy: Always
-  enableTLS: false
-  # TLS configs
-  tls:
-    static:
-      member:
-        peerSecret: etcd-peer-tls
-        serverSecret: etcd-server-tls
-      operatorSecret: etcd-client-tls
-  ## etcd cluster pod specific values
-  ## Ref: https://github.com/coreos/etcd-operator/blob/master/doc/user/spec_examples.md#three-members-cluster-with-resource-requirement
-  pod:
-    ## Antiaffinity for etcd pod assignment
-    ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
-    antiAffinity: false
-    resources:
-      limits:
-        cpu: 100m
-        memory: 128Mi
-      requests:
-        cpu: 100m
-        memory: 128Mi
-    ## Node labels for etcd pod assignment
-    ## Ref: https://kubernetes.io/docs/user-guide/node-selection/
-    nodeSelector: {}

@@ -22,6 +22,11 @@ with open("../plateform/manifests/"+name_file+".yaml", 'r') as stream:
         print("Layer-base...")
         create_base(plateform)
 
+        # Attention: "bastion" doit etre avant Kubernetes
+        if "bastion" in plateform['infrastructure']:
+            print("Layer-bastion...")
+            create_bastion(plateform)
+        
         if "gke" in plateform['infrastructure']:
             wait_cluster_if_exist(plateform)
 
@@ -36,9 +41,6 @@ with open("../plateform/manifests/"+name_file+".yaml", 'r') as stream:
         else:
             print("Layer-kubernetes skip !")
 
-        if "bastion" in plateform['infrastructure']:
-            print("Layer-bastion...")
-            create_bastion(plateform)
 
         if 'cloudsql' in plateform['infrastructure']:
             print("Layer-data...")

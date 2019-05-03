@@ -20,10 +20,10 @@ resource "google_compute_instance" "lp-bastion" {
     }
   }
 
-  metadata_startup_script = "echo hi > /test.txt"
+  metadata_startup_script = "${file("${path.cwd}/install-vm.sh")} ${terraform.workspace}"
 
   service_account {
-    scopes = ["userinfo-email", "compute-ro", "storage-ro"]
+    scopes = ["cloud-platform", "userinfo-email", "compute-ro", "storage-ro"]
   }
 
   metadata = {

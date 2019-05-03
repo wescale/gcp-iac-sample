@@ -5,7 +5,7 @@ resource "google_dns_record_set" "lp-bastion-dns" {
 
   managed_zone = "${data.terraform_remote_state.layer-base.dns-public-zone-name}"
 
-  rrdatas = ["${google_compute_instance.lp-bastion.network_interface.0.access_config.0.nat_ip }"]
+  rrdatas = ["${google_compute_instance.lp-bastion.network_interface.0.access_config.0.nat_ip}"]
 }
 
 resource "google_compute_firewall" "lp-bastion-external" {
@@ -32,4 +32,19 @@ resource "google_compute_firewall" "lp-bastion-gke" {
 
   target_tags = ["kubernetes", "lp-cluster-${terraform.workspace}"]
   source_tags = ["bastion", "${terraform.workspace}"]
+}
+
+resource "google_compute_firewall" "lp-gke-bastion" {
+  name    = "lp-gke-bastion-${terraform.workspace}"
+  network = "${data.terraform_remote_state.layer-base.lp-network-self-link}"
+
+  direction = "EGRESS"
+
+  allow {
+    protocol = "tcp"
+    ports    = ["30000-33000"]
+  }
+
+  destination_ranges = ["${data.terraform_remote_state.layer-base.lp-sub-network-cidr}"]
+  target_tags        = ["kubernetes", "lp-cluster-${terraform.workspace}"]
 }

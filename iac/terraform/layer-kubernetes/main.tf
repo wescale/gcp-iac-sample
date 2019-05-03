@@ -27,3 +27,12 @@ data "terraform_remote_state" "layer-base" {
     path   = "${var.prefix_bucket}/layer-base/${terraform.workspace}.tfstate"
   }
 }
+
+data "terraform_remote_state" "layer-bastion" {
+  backend = "gcs"
+
+  config {
+    bucket = "${var.remote_bucket}"
+    path   = "${var.prefix_bucket}/layer-bastion/${terraform.workspace}.tfstate"
+  }
+}

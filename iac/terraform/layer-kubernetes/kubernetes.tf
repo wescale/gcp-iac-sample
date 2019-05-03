@@ -39,6 +39,11 @@ resource "google_container_cluster" "lp-cluster" {
       cidr_block   = "81.250.133.68/32"
       display_name = "WeScale"
     }
+
+    cidr_blocks {
+      cidr_block   = "${data.terraform_remote_state.layer-bastion.bastion-ip}/32"
+      display_name = "bastion-ip"
+    }
   }
 
   min_master_version = "${var.k8s-version}"

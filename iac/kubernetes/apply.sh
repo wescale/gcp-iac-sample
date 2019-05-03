@@ -1,5 +1,9 @@
 #!/bin/bash
 
+test_tiller_present() {
+    kubectl get pod -n kube-system -l app=helm,name=tiller | grep Running | wc -l | tr -d ' '
+}
+
 workspace=$1
 
 if [ -z "$workspace" ]
@@ -12,6 +16,15 @@ echo "Create $workspace plateform... kubernetes step"
 kubectl apply -f kubernetes/helm/rbac.yaml
 helm init --service-account tiller
 
+test_tiller=$(test_tiller_present)
+while [ $test_tiller -lt 1 ]; do
+    echo "Wait for Tiller: $test_tiller"
+    test_tiller=$(test_tiller_present)
+    sleep 1
+done
+
+sleep 10
+
 # ExternalDNS
 # useless
 # kubectl apply  -f kubernetes/external-dns/public.yaml
@@ -21,7 +34,8 @@ helm init --service-account tiller
 test=$(helm status ingress-etcd)
 if [ $? -ne 0 ]; then
     kubectl create ns operators
-    helm install stable/etcd-operator --name ingress-etcd --namespace operators -f kubernetes/etcd-operator/values.yaml
+    # helm install stable/etcd-operator --name ingress-etcd --namespace operators -f kubernetes/etcd-operator/values.yaml --version 0.8.3
+    helm install stable/etcd-operator --name ingress-etcd --namespace operators --version 0.8.3
 else
     echo "ECTD operator already install"
 fi
