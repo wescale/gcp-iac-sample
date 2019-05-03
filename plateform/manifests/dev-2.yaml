@@ -34,6 +34,7 @@ infrastructure:
   - gateways
   - webservices
   - monitoring
+  - ingress-controller
 applications:
 - documentation: http://swagger.io
   name: app_a
