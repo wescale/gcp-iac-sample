@@ -33,7 +33,7 @@ Dans ce repository git vous trouverez la structure suivante:
 
 ## Architecture
 
-![Architecture.png](docs/img/Architecture.png)
+![Architecture.png](https://docs.google.com/drawings/d/e/2PACX-1vSwLxRl3aZQEe1wuli2WYgcRdQcFHM-xx8FzRSyH-z2lF-jHVwFViuzmPiS6yYf6vXhI-IAEsvCfmR-/pub?w=1045&h=727)
 
 Quelques points importants de cette infrastructure:
 
@@ -44,7 +44,7 @@ Quelques points importants de cette infrastructure:
 
 ## IaC
 
-![IaC-schema.png](docs/img/IaC-schema.png)
+![IaC-schema.png](https://docs.google.com/drawings/d/e/2PACX-1vR01A8FtKF_eJqwkodp9Q8M2yC4f_2cUWgzfnXDOgwZD5c-atlcgIxrebwurVYSPWkXu8Whs_QXDskw/pub?w=1204&h=676)
 
 Le principe de cette infrastructure est de décrire l'infrastructure dans un "manifest" en YAML.
 
@@ -125,7 +125,7 @@ Pour Kubernetes il faut installer:
 
 ## Continuous Integration
 
-![CI-schema.png](docs/img/CI-schema.png)
+![CI-schema.png](https://docs.google.com/drawings/d/e/2PACX-1vQ0qwRFxalKpsVIJSnHx_jBJLl4YubKWFzWDGSWoiYSUjXg3QyoQOsg4ExGy-ai_rxeUKifC6Hua2Xb/pub?w=960&h=720)
 
 Le schéma final avec l'ensemble des étapes du pipeline de Build.
 Quelques explications ci dessous qui décrive ce fichier [app/ci.sh](app/ci.sh)
@@ -163,7 +163,7 @@ gsutil mv app-chart-$version.tgz gs://charts-wescale-sandbox/app-chart/$version/
 
 ## Continuous Delivery
 
-![ContinuousDelivery-schema.png](docs/img/ContinuousDelivery-schema.png)
+![ContinuousDelivery-schema.png](https://docs.google.com/drawings/d/e/2PACX-1vRJcbd0ZuOJzvJrrSGe8GaBRg_1u-jMj4TTfCeyHmHGCnz4RxPbsY3SWskDVz3WMQosHa3_m55AIw0P/pub?w=960&h=720)
 
 L'objectif de cette étape est de déployer une application dans une plateforme.
 
