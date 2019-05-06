@@ -20,7 +20,7 @@ resource "google_compute_instance" "lp-bastion" {
     }
   }
 
-  metadata_startup_script = "${file("${path.cwd}/install-vm.sh")} ${terraform.workspace}"
+  metadata_startup_script = "${data.template_file.init-vm.rendered}"
 
   service_account {
     scopes = ["cloud-platform", "userinfo-email", "compute-ro", "storage-ro"]
@@ -33,5 +33,14 @@ resource "google_compute_instance" "lp-bastion" {
 
   metadata = {
     plateform = "${terraform.workspace}"
+  }
+}
+
+data "template_file" "init-vm" {
+  template = "${file("${path.cwd}/install-vm.sh")}"
+
+  vars = {
+    workspace = "${terraform.workspace}"
+    region    = "${var.region}"
   }
 }

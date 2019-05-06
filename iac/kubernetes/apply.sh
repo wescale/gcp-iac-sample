@@ -20,19 +20,15 @@ echo "Create $workspace plateform... kubernetes step"
 kubectl apply -f kubernetes/helm/rbac.yaml
 helm init --service-account tiller
 
-echo "Helm install return: $?"
-if [ $? -ne 0 ]; then
-    test_tiller=$(test_tiller_present)
-    while [ $test_tiller -lt 1 ]; do
-        echo "Wait for Tiller: $test_tiller"
-        test_tiller=$(test_tiller_present)
-        sleep 1
-    done
 
-    sleep 10
-else 
-    echo "Helm already install"
-fi
+test_tiller=$(test_tiller_present)
+while [ $test_tiller -lt 1 ]; do
+    echo "Wait for Tiller: $test_tiller"
+    test_tiller=$(test_tiller_present)
+    sleep 1
+done
+
+sleep 10
 
 # ExternalDNS
 # useless

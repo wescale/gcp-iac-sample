@@ -29,8 +29,8 @@ resource "google_compute_url_map" "lb-urlmap" {
   default_service = "${google_compute_backend_service.lp-public-home.self_link}"
 
   host_rule {
-    hosts        = ["*"]
-    path_matcher = "allpaths"
+    hosts        = ["${terraform.workspace}.gcp-wescale.slavayssiere.fr"]
+    path_matcher = "root"
   }
 
   host_rule {
@@ -38,8 +38,18 @@ resource "google_compute_url_map" "lb-urlmap" {
     path_matcher = "public-ic"
   }
 
+  host_rule {
+    hosts        = ["private-ic.${terraform.workspace}.gcp-wescale.slavayssiere.fr"]
+    path_matcher = "private-ic"
+  }
+
+  host_rule {
+    hosts        = ["consul.${terraform.workspace}.gcp-wescale.slavayssiere.fr"]
+    path_matcher = "consul"
+  }
+
   path_matcher {
-    name            = "allpaths"
+    name            = "root"
     default_service = "${google_compute_backend_service.lp-public-home.self_link}"
 
     path_rule {
@@ -50,6 +60,16 @@ resource "google_compute_url_map" "lb-urlmap" {
 
   path_matcher {
     name            = "public-ic"
+    default_service = "${google_compute_backend_service.lp-public-home.self_link}"
+  }
+
+  path_matcher {
+    name            = "private-ic"
+    default_service = "${google_compute_backend_service.lp-public-home.self_link}"
+  }
+
+  path_matcher {
+    name            = "consul"
     default_service = "${google_compute_backend_service.lp-public-home.self_link}"
   }
 }

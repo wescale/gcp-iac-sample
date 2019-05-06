@@ -49,12 +49,12 @@ tolerations: []
 #   value: "value"
 #   effect: "NoSchedule|PreferNoSchedule|NoExecute(1.6 only)"
 ## Kubernetes ingress filters
-# kubernetes:
+kubernetes:
   # endpoint:
   # namespaces:
   # - default
   # labelSelector:
-  # ingressClass:
+  ingressClass: public-ingress
   # ingressEndpoint:
   #   hostname: "localhost"
   #   ip: "127.0.0.1"
@@ -308,9 +308,9 @@ dashboard:
   # service: 
     # annotations:
     #  key: value
-  ingress: {}
-    # annotations:
-    #   key: value
+  ingress:
+    annotations:
+      kubernetes.io/ingress.class: public-ingress
     # labels:
     #   key: value
     # tls:

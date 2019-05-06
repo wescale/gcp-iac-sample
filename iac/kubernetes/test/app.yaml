@@ -52,18 +52,18 @@ spec:
   ports:
     - port: 8080
       targetPort: 8080
-      nodePort: 32080
       name: rest-api-ws
   selector:
     app: webservice
     k8s-app: ws-deployment
-  type: NodePort
 ---
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: basic-ingress
   namespace: default
+  annotations:
+    kubernetes.io/ingress.class: public-ingress
 spec:
   backend:
     serviceName: ws-service
