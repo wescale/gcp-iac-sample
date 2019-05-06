@@ -54,7 +54,7 @@ kubernetes:
   # namespaces:
   # - default
   # labelSelector:
-  ingressClass: public-ingress
+  ingressClass: private-ingress
   # ingressEndpoint:
   #   hostname: "localhost"
   #   ip: "127.0.0.1"
@@ -147,7 +147,7 @@ kvprovider:
   consul:
     endpoint: ingress-consul:8500
     watch: true
-    prefix: traefik-public
+    prefix: traefik-private
 
     ## Override default configuration template.
     ## For advanced users :)
@@ -310,7 +310,7 @@ dashboard:
     #  key: value
   ingress:
     annotations:
-      kubernetes.io/ingress.class: public-ingress
+      kubernetes.io/ingress.class: private-ingress
     # labels:
     #   key: value
     # tls:
@@ -332,8 +332,8 @@ service:
   ## Default config with empty string "" will assign a dynamic
   ## nodePort to http and https ports
   nodePorts:
-    http: "31080"
-    https: "31443"
+    http: "32080"
+    https: "32443"
 gzip:
   enabled: true
 traefikLogFormat: json
@@ -389,7 +389,7 @@ deployment:
 sendAnonymousUsage: false
 tracing:
   enabled: false
-  serviceName: traefik-public
+  serviceName: traefik-private
   # backend: choices are jaeger, zipkin, datadog
   # jaeger:
   #   localAgentHostPort: "127.0.0.1:6831"

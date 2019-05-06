@@ -245,4 +245,5 @@ Renseigner le nom du fichier, ici "dev-2"
 - Monitoring des plateformes
 - installation de CertManager
 
-- Changer le healthcheak vers le default app vers Traefik (public): /ping et 31080
+- Faire des sanity check à la fin du déploiement de l'infra
+- check Yaml au début du projet

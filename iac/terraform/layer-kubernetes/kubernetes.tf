@@ -49,8 +49,8 @@ resource "google_container_cluster" "lp-cluster" {
   min_master_version = "${var.k8s-version}"
   node_version       = "${var.k8s-version}"
 
-  network    = "https://www.googleapis.com/compute/v1/${data.terraform_remote_state.layer-base.lp-network-self-link}"
-  subnetwork = "https://www.googleapis.com/compute/v1/${data.terraform_remote_state.layer-base.lp-sub-network-self-link}"
+  network    = "${data.terraform_remote_state.layer-base.lp-network-self-link}"
+  subnetwork = "${data.terraform_remote_state.layer-base.lp-sub-network-self-link}"
 
   addons_config {
     kubernetes_dashboard {
@@ -105,6 +105,7 @@ resource "google_container_node_pool" "np-default" {
       "https://www.googleapis.com/auth/logging.write",
       "https://www.googleapis.com/auth/monitoring",
       "https://www.googleapis.com/auth/ndev.clouddns.readwrite",
+      "https://www.googleapis.com/auth/devstorage.read_only",
     ]
 
     labels {

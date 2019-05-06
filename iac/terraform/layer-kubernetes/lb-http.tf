@@ -53,7 +53,7 @@ resource "google_compute_url_map" "lb-urlmap" {
     default_service = "${google_compute_backend_service.lp-public-home.self_link}"
 
     path_rule {
-      paths   = ["/static"]
+      paths   = ["/static/*"]
       service = "${google_compute_backend_bucket.lp-static.self_link}"
     }
   }
@@ -137,6 +137,8 @@ resource "google_compute_firewall" "allow-http-lb-to-gke" {
     ports    = ["31080"]
   }
 
-  source_ranges = ["130.211.0.0/22", "35.191.0.0/16"]
+  source_ranges = ["${data.google_compute_lb_ip_ranges.ranges.http_ssl_tcp_internal}"]
   target_tags   = ["kubernetes", "lp-cluster-${terraform.workspace}"]
 }
+
+data "google_compute_lb_ip_ranges" "ranges" {}
