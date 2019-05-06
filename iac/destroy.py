@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import yaml
-from functions_iac import delete_kubernetes, delete_data, delete_base, delete_tfstate, delete_bastion
+from functions_iac import delete_kubernetes, delete_data, delete_base, delete_tfstate, delete_bastion, delete_fw
 import sys
 
 if len(sys.argv) > 1:
@@ -39,6 +39,9 @@ with open("../plateform/manifests/"+name_file+".yaml", 'r') as stream:
 
             with open("../plateform/manifests/"+name_file+".yaml", 'w') as yaml_file:
                 yaml.dump(plateform, yaml_file, default_flow_style=False)
+
+        print("Delete fw...")
+        delete_fw(plateform['name'])
 
         print("Layer-base...")
         delete_base(plateform)

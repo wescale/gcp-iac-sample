@@ -20,6 +20,7 @@ echo "Create $workspace plateform... kubernetes step"
 kubectl apply -f kubernetes/helm/rbac.yaml
 helm init --service-account tiller
 
+helm repo add incubator http://storage.googleapis.com/kubernetes-charts-incubator
 
 test_tiller=$(test_tiller_present)
 while [ $test_tiller -lt 1 ]; do
@@ -61,7 +62,7 @@ if [ $? -ne 0 ]; then
         --set uiIngress.hosts={"consul.$workspace.gcp-wescale.slavayssiere.fr"}
 
 
-    kubectl -n ingress-controller annotate ing ingress-consul-ui "kubernetes.io/ingress.class=public-ingress"
+    kubectl -n ingress-controller annotate ing ingress-consul-ui "kubernetes.io/ingress.class=private-ingress"
     kubectl -n ingress-controller patch ing ingress-consul-ui --type='json' -p='[{"op": "replace", "path": "/spec/rules/0/http/paths/0/backend/serviceName", "value":"ingress-consul"}]'
 else
     echo "Consul already install"
@@ -92,4 +93,24 @@ else
     echo "Private ingress already install"
 fi
 
+## Jaeger
+kubectl create namespace observability # (1)
+kubectl create -f https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/crds/jaegertracing_v1_jaeger_crd.yaml # (2)
+kubectl create -f https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/service_account.yaml
+kubectl create -f https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/role.yaml
+kubectl create -f https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/role_binding.yaml
+kubectl create -f https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/operator.yaml
+
+
+test=$(helm status elasticsearch)
+if [ $? -ne 0 ]; then
+    helm install incubator/elasticsearch \
+        --name elasticsearch \
+        --namespace monitoring \
+        -f kubernetes/jaeger/values-elasticsearch.yaml
+else
+    echo "Jaeger operator already install"
+fi
+
 kubectl apply -f kubernetes/test/app.yaml
+kubectl apply -f kubernetes/jaeger/jaeger.yaml

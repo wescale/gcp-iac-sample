@@ -247,3 +247,6 @@ def deploy_assets(name):
 
 def delete_tfstate(name):
     subprocess.call(["scripts/destroy-gcs.sh", name])
+
+def delete_fw(name):
+    subprocess.call(["scripts/destroy-fw.sh", name])

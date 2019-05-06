@@ -19,7 +19,8 @@ it=0
 for i in "${ig_array[@]}"
 do
     echo "Port named for $i"
-    gcloud compute instance-groups set-named-ports $i --named-ports=http:31080 --project $GCP_PROJECT --zone ${az_array[$it]}
+    gcloud compute instance-groups set-named-ports $i --named-ports=http-public:31080 --project $GCP_PROJECT --zone ${az_array[$it]}
+    gcloud compute instance-groups set-named-ports $i --named-ports=http-private:32080 --project $GCP_PROJECT --zone ${az_array[$it]}
     it=$((it+1))
     echo "Iterate $it"
 done 

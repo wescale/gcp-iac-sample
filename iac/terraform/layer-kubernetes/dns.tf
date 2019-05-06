@@ -5,7 +5,7 @@ resource "google_dns_record_set" "lp-a-public" {
 
   managed_zone = "${data.terraform_remote_state.layer-base.dns-public-zone-name}"
 
-  rrdatas = ["${google_compute_global_address.lb-public-ip.address}"]
+  rrdatas = ["${google_compute_global_address.lb-private-ip.address}"]
 }
 
 resource "google_dns_record_set" "lp-a-private" {
@@ -15,7 +15,7 @@ resource "google_dns_record_set" "lp-a-private" {
 
   managed_zone = "${data.terraform_remote_state.layer-base.dns-public-zone-name}"
 
-  rrdatas = ["${google_compute_global_address.lb-public-ip.address}"]
+  rrdatas = ["${google_compute_global_address.lb-private-ip.address}"]
 }
 
 resource "google_dns_record_set" "lp-a-consul" {
@@ -25,7 +25,17 @@ resource "google_dns_record_set" "lp-a-consul" {
 
   managed_zone = "${data.terraform_remote_state.layer-base.dns-public-zone-name}"
 
-  rrdatas = ["${google_compute_global_address.lb-public-ip.address}"]
+  rrdatas = ["${google_compute_global_address.lb-private-ip.address}"]
+}
+
+resource "google_dns_record_set" "lp-a-admin" {
+  name = "admin.${data.terraform_remote_state.layer-base.dns-public-zone}"
+  type = "A"
+  ttl  = 300
+
+  managed_zone = "${data.terraform_remote_state.layer-base.dns-public-zone-name}"
+
+  rrdatas = ["${google_compute_global_address.lb-private-ip.address}"]
 }
 
 resource "google_dns_record_set" "lp-global" {
@@ -37,3 +47,5 @@ resource "google_dns_record_set" "lp-global" {
 
   rrdatas = ["${google_compute_global_address.lb-public-ip.address}"]
 }
+
+data "google_compute_lb_ip_ranges" "ranges" {}

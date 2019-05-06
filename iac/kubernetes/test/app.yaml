@@ -4,6 +4,8 @@ metadata:
   name: ws-deployment
   labels:
     k8s-app: ws-deployment
+  annotations:
+    "sidecar.jaegertracing.io/inject": "true"
 spec:
   replicas: 3
   selector:
