@@ -22,9 +22,9 @@ metadata:
     kubernetes.io/ingress.class: private-ingress
 spec:
   rules:
-  - host: admin.dev-2.gcp-wescale.slavayssiere.fr
+  - host: jaeger.dev-2.gcp-wescale.slavayssiere.fr
     http:
       paths:
       - backend:
-          serviceName: jaeger-operator
-          servicePort: 8383
+          serviceName: simple-prod-query
+          servicePort: 16686

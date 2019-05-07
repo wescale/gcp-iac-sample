@@ -5,7 +5,7 @@ metadata:
   labels:
     k8s-app: ws-deployment
   annotations:
-    "sidecar.jaegertracing.io/inject": "true"
+    sidecar.jaegertracing.io/inject: "true"
 spec:
   replicas: 3
   selector:
@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: webservice
-        image: eu.gcr.io/slavayssiere-sandbox/api-test:0.0.3
+        image: eu.gcr.io/slavayssiere-sandbox/api-test:0.0.4
         env:
         - name: PREFIX_PATH
           value: /
@@ -71,6 +71,7 @@ spec:
   - host: dev-2.gcp-wescale.slavayssiere.fr
     http:
       paths:
-      - backend:
+      - path: /
+        backend:
           serviceName: ws-service
           servicePort: 8080

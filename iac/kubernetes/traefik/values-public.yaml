@@ -377,8 +377,8 @@ deployment:
   # labels to add to the pod container metadata
   # podLabels:
   #   key: value
-  # podAnnotations:
-  #   key: value
+  podAnnotations:
+    sidecar.jaegertracing.io/inject: "true"
   hostPort:
     httpEnabled: false
     httpsEnabled: false
@@ -388,14 +388,14 @@ deployment:
     # dashboardPort: 8080
 sendAnonymousUsage: false
 tracing:
-  enabled: false
+  enabled: true
   serviceName: traefik-public
-  # backend: choices are jaeger, zipkin, datadog
+  backend: jaeger
   jaeger:
     localAgentHostPort: "127.0.0.1:6831"
     samplingServerURL: http://simple-prod-agent.observability:5778/sampling
     samplingType: const
-    samplingParam: 1.0
+    samplingParam: '1.0'
   # zipkin:
   #   httpEndpoint: http://localhost:9411/api/v1/spans
   #   debug: false

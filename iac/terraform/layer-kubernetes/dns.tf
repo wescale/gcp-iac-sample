@@ -28,6 +28,16 @@ resource "google_dns_record_set" "lp-a-consul" {
   rrdatas = ["${google_compute_global_address.lb-private-ip.address}"]
 }
 
+resource "google_dns_record_set" "lp-a-jaeger" {
+  name = "jaeger.${data.terraform_remote_state.layer-base.dns-public-zone}"
+  type = "A"
+  ttl  = 300
+
+  managed_zone = "${data.terraform_remote_state.layer-base.dns-public-zone-name}"
+
+  rrdatas = ["${google_compute_global_address.lb-private-ip.address}"]
+}
+
 resource "google_dns_record_set" "lp-a-admin" {
   name = "admin.${data.terraform_remote_state.layer-base.dns-public-zone}"
   type = "A"

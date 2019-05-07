@@ -31,6 +31,26 @@ done
 
 sleep 10
 
+
+## Jaeger
+kubectl create namespace observability # (1)
+kubectl apply -f https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/crds/jaegertracing_v1_jaeger_crd.yaml # (2)
+kubectl apply -f https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/service_account.yaml
+kubectl apply -f https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/role.yaml
+kubectl apply -f https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/role_binding.yaml
+kubectl apply -f https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/operator.yaml
+
+
+test=$(helm status elasticsearch)
+if [ $? -ne 0 ]; then
+    helm install incubator/elasticsearch \
+        --name elasticsearch \
+        --namespace monitoring \
+        -f kubernetes/jaeger/values-elasticsearch.yaml
+else
+    echo "Jaeger operator already install"
+fi
+
 # ExternalDNS
 # useless
 # kubectl apply  -f kubernetes/external-dns/public.yaml
@@ -93,24 +113,6 @@ else
     echo "Private ingress already install"
 fi
 
-## Jaeger
-kubectl create namespace observability # (1)
-kubectl apply -f https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/crds/jaegertracing_v1_jaeger_crd.yaml # (2)
-kubectl apply -f https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/service_account.yaml
-kubectl apply -f https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/role.yaml
-kubectl apply -f https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/role_binding.yaml
-kubectl apply -f https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/operator.yaml
-
-
-test=$(helm status elasticsearch)
-if [ $? -ne 0 ]; then
-    helm install incubator/elasticsearch \
-        --name elasticsearch \
-        --namespace monitoring \
-        -f kubernetes/jaeger/values-elasticsearch.yaml
-else
-    echo "Jaeger operator already install"
-fi
 
 kubectl apply -f kubernetes/test/app.yaml
 kubectl apply -f kubernetes/jaeger/jaeger.yaml

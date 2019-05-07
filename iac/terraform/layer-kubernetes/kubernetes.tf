@@ -108,6 +108,10 @@ resource "google_container_node_pool" "np-default" {
       "https://www.googleapis.com/auth/devstorage.read_only",
     ]
 
+    metadata {
+      disable-legacy-endpoints = "true"
+    }
+
     labels {
       Name      = "lp-cluster"
       Plateform = "${terraform.workspace}"
