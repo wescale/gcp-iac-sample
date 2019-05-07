@@ -49,3 +49,7 @@ output "app_a_key" {
 output "range-plateform" {
   value = "${var.range-plateform}"
 }
+
+output "security-policy" {
+  value = "${google_compute_security_policy.lp-policy-ip-restriction.self_link}"
+}

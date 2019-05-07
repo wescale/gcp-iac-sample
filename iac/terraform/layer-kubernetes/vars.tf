@@ -47,3 +47,5 @@ variable "max_node" {
 }
 
 variable "range_ip_master" {}
+
+data "google_compute_lb_ip_ranges" "ranges" {}

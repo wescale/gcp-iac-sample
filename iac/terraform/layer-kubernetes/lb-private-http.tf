@@ -75,12 +75,14 @@ resource "google_compute_url_map" "lb-private-urlmap" {
 }
 
 resource "google_compute_backend_service" "lp-private-home" {
-  name        = "lp-private-home-${terraform.workspace}"
-  description = "Our company website"
-  port_name   = "http-private"
-  protocol    = "HTTP"
-  timeout_sec = 10
-  enable_cdn  = false
+  provider        = "google-beta"
+  name            = "lp-private-home-${terraform.workspace}"
+  description     = "Our company website"
+  port_name       = "http-private"
+  protocol        = "HTTP"
+  timeout_sec     = 10
+  enable_cdn      = false
+  security_policy = "${data.terraform_remote_state.layer-base.security-policy}"
 
   backend {
     group          = "${replace(element(google_container_node_pool.np-default.instance_group_urls, 1), "Manager", "")}"
@@ -105,37 +107,4 @@ resource "google_compute_backend_bucket" "lp-private-static" {
   description = "Contains beautiful images"
   bucket_name = "${google_storage_bucket.lp-private-static-bucket.name}"
   enable_cdn  = false
-}
-
-resource "google_storage_bucket" "lp-private-static-bucket" {
-  name          = "lp-private-static-bucket-${terraform.workspace}"
-  location      = "${var.region}"
-  force_destroy = true
-}
-
-resource "google_compute_firewall" "allow-private-hc-http-lb" {
-  name    = "allow-private-hc-http-lb-${terraform.workspace}"
-  network = "${data.terraform_remote_state.layer-base.lp-network-self-link}"
-
-  allow {
-    protocol = "tcp"
-    ports    = ["80", "443", "30000-33000"]
-  }
-
-  source_ranges = ["${data.terraform_remote_state.layer-base.range-plateform}"]
-  target_tags   = ["lp-cluster-${terraform.workspace}"]
-}
-
-resource "google_compute_firewall" "allow-private-http-lb-to-gke" {
-  name      = "allow-private-http-lb-to-gke-${terraform.workspace}"
-  network   = "${data.terraform_remote_state.layer-base.lp-network-self-link}"
-  direction = "INGRESS"
-
-  allow {
-    protocol = "tcp"
-    ports    = ["32080"]
-  }
-
-  source_ranges = ["${data.google_compute_lb_ip_ranges.ranges.http_ssl_tcp_internal}"]
-  target_tags   = ["kubernetes", "lp-cluster-${terraform.workspace}"]
 }

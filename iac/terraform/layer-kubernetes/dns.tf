@@ -47,5 +47,3 @@ resource "google_dns_record_set" "lp-global" {
 
   rrdatas = ["${google_compute_global_address.lb-public-ip.address}"]
 }
-
-data "google_compute_lb_ip_ranges" "ranges" {}

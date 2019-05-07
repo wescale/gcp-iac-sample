@@ -29,7 +29,9 @@ def create_base(plateform):
             'range-ip': plateform['infrastructure']['range-ip'],
             'range-ip-pod': plateform['infrastructure']['range-ip-pod'],
             'range-ip-svc': plateform['infrastructure']['range-ip-svc'],
-            'range-plateform': plateform['infrastructure']['range-plateform']
+            'range-plateform': plateform['infrastructure']['range-plateform'],
+            'allowed-ips': plateform['ips_whitelist'],
+            'env': plateform['type']
         }, 
         capture_output=False, 
         no_color=IsNotFlagged, 
@@ -50,7 +52,9 @@ def delete_base(plateform):
             'range-ip': plateform['infrastructure']['range-ip'],
             'range-ip-pod': plateform['infrastructure']['range-ip-pod'],
             'range-ip-svc': plateform['infrastructure']['range-ip-svc'],
-            'range-plateform': plateform['infrastructure']['range-plateform']
+            'range-plateform': plateform['infrastructure']['range-plateform'],
+            'allowed-ips': plateform['ips_whitelist'],
+            'env': plateform['type']
         }, 
         capture_output=False, 
         no_color=IsNotFlagged, 

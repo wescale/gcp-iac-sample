@@ -10,9 +10,14 @@ if len(sys.argv) > 1:
 else:
     name_file = raw_input("Nom du fichier: ")
 
+try:
+    from yaml import CLoader as Loader, CDumper as Dumper
+except ImportError:
+    from yaml import Loader, Dumper
+
 with open("../plateform/manifests/"+name_file+".yaml", 'r') as stream:
     try:
-        plateform=yaml.load(stream)
+        plateform=yaml.load(stream, Loader=Loader)
         print(plateform)
 
         print("Delete plateform with name: " + plateform['name'])

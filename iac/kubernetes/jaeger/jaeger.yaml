@@ -12,3 +12,19 @@ spec:
         server-urls: http://elasticsearch-client:9200
   ingress:
     enabled: false
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: jaeger-ingress
+  namespace: monitoring
+  annotations:
+    kubernetes.io/ingress.class: private-ingress
+spec:
+  rules:
+  - host: admin.dev-2.gcp-wescale.slavayssiere.fr
+    http:
+      paths:
+      - backend:
+          serviceName: jaeger-operator
+          servicePort: 8383

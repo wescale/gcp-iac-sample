@@ -388,7 +388,7 @@ deployment:
     # dashboardPort: 8080
 sendAnonymousUsage: false
 tracing:
-  enabled: true
+  enabled: false
   serviceName: traefik-public
   # backend: choices are jaeger, zipkin, datadog
   jaeger:

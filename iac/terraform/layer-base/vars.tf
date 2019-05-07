@@ -25,3 +25,11 @@ variable "range-ip-svc" {
 }
 
 variable "range-plateform" {}
+
+variable "allowed-ips" {
+  default = ["*"]
+}
+
+variable "env" {
+  default = "prod"
+}
