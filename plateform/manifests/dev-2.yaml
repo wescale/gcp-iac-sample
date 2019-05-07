@@ -4,6 +4,9 @@ region: europe-west1
 type: dev
 remote-bucket: tf-slavayssiere-wescale
 prefix-bucket: gcp-sample-iac
+ips_whitelist:
+- 37.173.210.210
+- 195.81.225.200
 infrastructure:
   version: 0.0.1
   range-ip: 10.0.16.0/20
