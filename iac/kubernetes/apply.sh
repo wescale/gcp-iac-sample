@@ -81,7 +81,6 @@ if [ $? -ne 0 ]; then
         -f kubernetes/consul/values.yaml \
         --set uiIngress.hosts={"consul.$workspace.gcp-wescale.slavayssiere.fr"}
 
-
     kubectl -n ingress-controller annotate ing ingress-consul-ui "kubernetes.io/ingress.class=private-ingress"
     kubectl -n ingress-controller patch ing ingress-consul-ui --type='json' -p='[{"op": "replace", "path": "/spec/rules/0/http/paths/0/backend/serviceName", "value":"ingress-consul"}]'
 else
@@ -97,6 +96,8 @@ if [ $? -ne 0 ]; then
         -f kubernetes/traefik/values-public.yaml \
         --set imageTag=1.7.11 \
         --set dashboard.domain=public-ic.$workspace.gcp-wescale.slavayssiere.fr
+
+    kubectl -n ingress-controller annotate deploy public-ic-traefik "sidecar.jaegertracing.io/inject=true"
 else
     echo "Public ingress already install"
 fi
@@ -109,6 +110,8 @@ if [ $? -ne 0 ]; then
         -f kubernetes/traefik/values-private.yaml \
         --set imageTag=1.7.11 \
         --set dashboard.domain=private-ic.$workspace.gcp-wescale.slavayssiere.fr
+
+    kubectl -n ingress-controller annotate deploy private-ic-traefik "sidecar.jaegertracing.io/inject=true"
 else
     echo "Private ingress already install"
 fi

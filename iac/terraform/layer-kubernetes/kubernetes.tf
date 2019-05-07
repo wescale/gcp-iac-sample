@@ -93,7 +93,7 @@ resource "google_container_node_pool" "np-default" {
   name       = "np-default-${terraform.workspace}"
   location   = "${var.region}"
   cluster    = "${google_container_cluster.lp-cluster.name}"
-  node_count = 1
+  node_count = 2
 
   node_config {
     machine_type = "${var.instance-type}"
@@ -105,7 +105,6 @@ resource "google_container_node_pool" "np-default" {
       "https://www.googleapis.com/auth/logging.write",
       "https://www.googleapis.com/auth/monitoring",
       "https://www.googleapis.com/auth/ndev.clouddns.readwrite",
-      "https://www.googleapis.com/auth/devstorage.read_only",
     ]
 
     metadata {
@@ -115,6 +114,7 @@ resource "google_container_node_pool" "np-default" {
     labels {
       Name      = "lp-cluster"
       Plateform = "${terraform.workspace}"
+      NodePool  = "np-back"
     }
 
     tags = ["kubernetes", "lp-cluster-${terraform.workspace}"]
@@ -130,3 +130,54 @@ resource "google_container_node_pool" "np-default" {
     auto_upgrade = true
   }
 }
+
+// resource "google_container_node_pool" "np-back" {
+//   provider   = "google-beta"
+//   name       = "np-back-${terraform.workspace}"
+//   location   = "${var.region}"
+//   cluster    = "${google_container_cluster.lp-cluster.name}"
+//   node_count = 1
+
+
+//   node_config {
+//     machine_type = "${var.instance-type}"
+//     preemptible  = "${var.preemptible}"
+
+
+//     oauth_scopes = [
+//       "https://www.googleapis.com/auth/compute",
+//       "https://www.googleapis.com/auth/devstorage.read_only",
+//       "https://www.googleapis.com/auth/logging.write",
+//       "https://www.googleapis.com/auth/monitoring",
+//       "https://www.googleapis.com/auth/ndev.clouddns.readwrite"
+//     ]
+
+
+//     metadata {
+//       disable-legacy-endpoints = "false"
+//     }
+
+
+//     labels {
+//       Name      = "lp-cluster"
+//       Plateform = "${terraform.workspace}"
+//       NodePool  = "np-back"
+//     }
+
+
+//     tags = ["kubernetes", "lp-cluster-${terraform.workspace}"]
+//   }
+
+
+//   autoscaling {
+//     min_node_count = "${var.min_node}"
+//     max_node_count = "${var.max_node}"
+//   }
+
+
+//   management {
+//     auto_repair  = true
+//     auto_upgrade = true
+//   }
+// }
+
