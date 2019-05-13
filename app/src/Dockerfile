@@ -15,7 +15,16 @@ RUN go install
 # final stage
 FROM alpine
 RUN apk add --no-cache curl
+
 ENV PREFIX_PATH /
+ENV JAEGER_SERVICE_NAME app-test
+ENV JAEGER_SAMPLER_MANAGER_HOST_PORT http://localhost:5778/
+ENV MYSQL_HOST localhost
+ENV MYSQL_PORT 3306
+ENV MYSQL_USER user1
+ENV MYSQL_PASSWORD password
+ENV MYSQL_DATABASE test
+
 WORKDIR /app
 COPY --from=build-stage /go/bin/app /app/
 HEALTHCHECK --interval=5s --retries=3 --timeout=5s CMD curl -f http://localhost:8080/healthz || exit 1

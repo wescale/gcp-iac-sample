@@ -51,26 +51,24 @@ else
     echo "Jaeger operator already install"
 fi
 
-# ExternalDNS
-# useless
-# kubectl apply  -f kubernetes/external-dns/public.yaml
+test=$(helm status prometheus-operator)
+if [ $? -ne 0 ]; then
+    helm install stable/prometheus-operator \
+        --name prometheus-operator \
+        --namespace observability \
+        -f kubernetes/prometheus-operator/values.yaml \
+        --set grafana.ingress.hosts={"admin.$workspace.gcp-wescale.slavayssiere.fr"} \
+        --set prometheus.ingress.hosts={"admin.$workspace.gcp-wescale.slavayssiere.fr"} \
+        --set alertmanager.ingress.hosts={"admin.$workspace.gcp-wescale.slavayssiere.fr"}
 
-# # ETCD operator
-# test=$(helm status ingress-etcd)
-# if [ $? -ne 0 ]; then
-#     kubectl create ns operators
-#     helm install stable/etcd-operator --name ingress-etcd --namespace operators -f kubernetes/etcd-operator/values.yaml --version 0.8.3
-# else
-#     echo "ECTD operator already install"
-# fi
-
-# until kubectl get crd etcdclusters.etcd.database.coreos.com
-# do
-#     echo "wait for CRD"
-#     sleep 5
-# done
-
-# kubectl apply -f kubernetes/etcd-operator/cluster.yaml
+    kubectl -n observability patch ing prometheus-operator-prometheus --type='json' -p='[{"op": "replace", "path": "/spec/rules/0/http/paths/0/path", "value":"/prometheus-k8s"}]'
+    kubectl -n observability \
+        create cm traefik-dashboard \
+        --from-file=dashboards/traefik.json
+    kubectl -n observability label cm traefik-dashboard grafana_dashboard="traefik-dashbaord"
+else
+    echo "Private ingress already install"
+fi
 
 # Consul
 test=$(helm status ingress-consul)
@@ -98,6 +96,8 @@ if [ $? -ne 0 ]; then
         --set dashboard.domain=public-ic.$workspace.gcp-wescale.slavayssiere.fr
 
     kubectl -n ingress-controller annotate deploy public-ic-traefik "sidecar.jaegertracing.io/inject=true"
+
+    kubectl apply -f kubernetes/traefik/service-monitor-public.yaml
 else
     echo "Public ingress already install"
 fi
@@ -112,10 +112,13 @@ if [ $? -ne 0 ]; then
         --set dashboard.domain=private-ic.$workspace.gcp-wescale.slavayssiere.fr
 
     kubectl -n ingress-controller annotate deploy private-ic-traefik "sidecar.jaegertracing.io/inject=true"
+
+    kubectl apply -f kubernetes/traefik/service-monitor-private.yaml
 else
     echo "Private ingress already install"
 fi
 
-
 kubectl apply -f kubernetes/test/app.yaml
 kubectl apply -f kubernetes/jaeger/jaeger.yaml
+
+

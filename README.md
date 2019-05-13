@@ -225,7 +225,7 @@ Renseigner le nom du fichier, ici "dev-2"
 A la fin pour tester la connexion à CloudSQL:
 
 ```language-bash
-NOM_PF="dev-3"
+NOM_PF="dev-2"
 PASSWORD="$(kubectl -n webservices get secrets cloudsql-secrets-user1 -o=jsonpath='{.data.password}' | base64 --decode)"
 kubectl run mysql-client --image=mysql:5.7 -it --rm --restart=Never -- mysql -h bdd.$NOM_PF.internal.lp -uuser1-$NOM_PF -p$PASSWORD
 ```
@@ -247,3 +247,13 @@ Renseigner le nom du fichier, ici "dev-2"
 
 - Faire des sanity check à la fin du déploiement de l'infra
 - check Yaml au début du projet
+- add restrict IP for cloudarmor
+
+## To debug
+
+```language-bash
+kubectl apply -f https://k8s.io/examples/admin/dns/busybox.yaml
+
+curl http://dev-2.gcp-wescale.slavayssiere.fr/ && curl http://dev-2.gcp-wescale.slavayssiere.fr/facture && curl http://dev-2.gcp-wescale.slavayssiere.fr/client
+
+```

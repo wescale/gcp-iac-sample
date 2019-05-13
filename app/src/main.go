@@ -5,12 +5,22 @@ import (
 	"net/http"
 	"os"
 	"time"
+	"strings"
+	"context"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+
+	"github.com/opentracing/opentracing-go/ext"
+	opentracing "github.com/opentracing/opentracing-go"
+	jaegercfg "github.com/uber/jaeger-client-go/config"
+
+	"github.com/jinzhu/gorm"
 )
+
+var db *gorm.DB
 
 // LoggerMiddleware add logger and metrics
 func LoggerMiddleware(inner http.HandlerFunc, name string, histogram *prometheus.HistogramVec, counter *prometheus.CounterVec) http.Handler {
@@ -19,20 +29,45 @@ func LoggerMiddleware(inner http.HandlerFunc, name string, histogram *prometheus
 
 		start := time.Now()
 
-		inner.ServeHTTP(w, r)
+		ctx := context.Background()
 
-		time := time.Since(start)
-		log.Printf(
-			"%s\t%s\t%s\t%s",
-			r.Method,
-			r.RequestURI,
-			name,
-			time,
-		)
+		if strings.Compare(name,"healthz") != 0 && strings.Compare(name,"ready") != 0 {
+			var span opentracing.Span
+			wireContext, err := opentracing.GlobalTracer().Extract(
+				opentracing.HTTPHeaders,
+				opentracing.HTTPHeadersCarrier(r.Header))
+			if err != nil {
+				log.Println(err)
+				log.Println(r.Header)
+			}
 
-		histogram.WithLabelValues(r.RequestURI).Observe(time.Seconds())
-		if counter != nil {
-			counter.WithLabelValues(r.RequestURI).Inc()
+			// Create the span referring to the RPC client if available.
+			// If wireContext == nil, a root span will be created.
+			span = opentracing.StartSpan(
+				name,
+				ext.RPCServerOption(wireContext))
+
+			defer span.Finish()
+
+			ctx = opentracing.ContextWithSpan(ctx, span)
+		}
+
+		inner.ServeHTTP(w, r.WithContext(ctx))
+
+		if strings.Compare(name,"healthz") != 0  && strings.Compare(name,"ready") != 0 {
+			time := time.Since(start)
+			log.Printf(
+				"%s\t%s\t%s\t%s",
+				r.Method,
+				r.RequestURI,
+				name,
+				time,
+			)
+
+			histogram.WithLabelValues(r.RequestURI).Observe(time.Seconds())
+			if counter != nil {
+				counter.WithLabelValues(r.RequestURI).Inc()
+			}
 		}
 	})
 }
@@ -40,6 +75,27 @@ func LoggerMiddleware(inner http.HandlerFunc, name string, histogram *prometheus
 func main() {
 
 	prefixPath := os.Getenv("PREFIX_PATH")
+
+	/// Tracer
+	cfg, err := jaegercfg.FromEnv()
+	if err != nil {
+		// parsing errors might happen here, such as when we get a string where we expect a number
+		log.Printf("Could not parse Jaeger env vars: %s", err.Error())
+		return
+	}
+
+	tracer, closer, err := cfg.NewTracer()
+	if err != nil {
+		log.Printf("Could not initialize jaeger tracer: %s", err.Error())
+		return
+	}
+	defer closer.Close()
+
+	opentracing.SetGlobalTracer(tracer)
+
+	//Database
+	db = connectDB()
+	defer db.Close()
 
 	router := mux.NewRouter().StrictSlash(true)
 
@@ -89,11 +145,11 @@ func main() {
 		Handler(handlerIP)
 
 	var handlerHealth http.Handler
-	handlerHealth = LoggerMiddleware(handlerHealthFunc, "heatlth", histogram, nil)
+	handlerHealth = LoggerMiddleware(handlerHealthFunc, "healthz", histogram, nil)
 	router.
 		Methods("GET").
 		Path(prefixPath + "healthz").
-		Name("heatlth").
+		Name("healthz").
 		Handler(handlerHealth)
 
 	var readyHealth http.Handler

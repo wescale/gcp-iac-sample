@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ws-deployment
+  namespace: webservices
   labels:
     k8s-app: ws-deployment
   annotations:
@@ -20,10 +21,28 @@ spec:
     spec:
       containers:
       - name: webservice
-        image: eu.gcr.io/slavayssiere-sandbox/api-test:0.0.4
+        image: eu.gcr.io/slavayssiere-sandbox/api-test:0.0.9
+        imagePullPolicy: Always
         env:
         - name: PREFIX_PATH
           value: /
+        - name: JAEGER_SERVICE_NAME
+          value: app-test
+        - name: JAEGER_SAMPLER_MANAGER_HOST_PORT
+          value: http://localhost:5778/
+        - name: MYSQL_HOST
+          value: "bdd.dev-2.internal.lp"
+        - name: MYSQL_PORT
+          value: "3306"
+        - name: MYSQL_USER
+          value: "user1-dev-2"
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: cloudsql-secrets-user1
+              key: password
+        - name: MYSQL_DATABASE
+          value: "my-database"
         ports:
         - containerPort: 8080
           name: rest-api-ws
@@ -47,6 +66,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: ws-service
+  namespace: webservices
   labels:
     app: webservice
     k8s-app: ws-deployment
@@ -63,7 +83,7 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: basic-ingress
-  namespace: default
+  namespace: webservices
   annotations:
     kubernetes.io/ingress.class: public-ingress
 spec:

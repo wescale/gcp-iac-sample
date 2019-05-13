@@ -72,7 +72,7 @@ with open("../plateform/manifests/"+name_file+".yaml", 'r') as stream:
 
             print("Save SQL secrets in kubernetes")
             sa_key = get_service_account()
-            save_secrets(user1_password, user2_password, sa_key)
+            save_secrets(user1_password, user2_password, sa_key, plateform['name'])
 
         else:
             print("Layer-data skip !")

@@ -27,7 +27,7 @@ def create_namespace(name):
 def apply_kubernetes(plateform):
     subprocess.call(["kubernetes/apply.sh", plateform['name']])
 
-def save_secrets(user1_password, user2_password, sa_key):
+def save_secrets(user1_password, user2_password, sa_key, name):
     # subprocess.call(["scripts/create-secrets.sh", user1_password, user2_password])
 
     config.load_kube_config()
@@ -35,7 +35,7 @@ def save_secrets(user1_password, user2_password, sa_key):
     print("Create secret for 'cloudsql-secrets-user1'")
     body = client.V1Secret(metadata=client.V1ObjectMeta(name="cloudsql-secrets-user1"))
     body.data = {
-        "user": base64.b64encode("user1"), 
+        "user": base64.b64encode("user1-"+name), 
         "password": base64.b64encode(user1_password)
     }
     body.type = "Opaque" 
@@ -51,7 +51,7 @@ def save_secrets(user1_password, user2_password, sa_key):
     print("Create secret for 'cloudsql-secrets-user2'")
     body = client.V1Secret(metadata=client.V1ObjectMeta(name="cloudsql-secrets-user2"))
     body.data = {
-        "user": base64.b64encode("user2"), 
+        "user": base64.b64encode("user2-"+name), 
         "password": base64.b64encode(user2_password)
     }
     body.type = "Opaque"
