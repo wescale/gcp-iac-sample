@@ -2,7 +2,7 @@
 
 import yaml
 from functions_iac import create_base, create_kubernetes, create_data, get_service_account, deploy_assets, create_bastion
-from functions_k8s import connect_gke, create_namespace, get_secret, save_secrets, apply_kubernetes, deploy_helm, wait_cluster_if_exist
+from functions_k8s import connect_gke, create_namespace, get_secret, save_secrets, apply_kubernetes, deploy_helm, wait_cluster_if_exist, install_prometheus_operator, install_consul, install_traefik, post_kubernetes
 from utils_iac import randomString
 import sys
 
@@ -39,6 +39,7 @@ with open("../plateform/manifests/"+name_file+".yaml", 'r') as stream:
             create_kubernetes(plateform)
 
             print("connect to new plateform...")
+            wait_cluster_if_exist(plateform)
             connect_gke(plateform)
 
             for name in plateform['infrastructure']['namespaces']:
@@ -77,7 +78,15 @@ with open("../plateform/manifests/"+name_file+".yaml", 'r') as stream:
         else:
             print("Layer-data skip !")
 
-        apply_kubernetes(plateform)
+        # apply kubernetes
+        apply_kubernetes(plateform['name'])
+
+        install_prometheus_operator(plateform['name'], plateform['infrastructure']['dependancies']['prometheus-operator']['version'])
+        install_consul(plateform['name'], plateform['infrastructure']['dependancies']['consul']['version'])
+        install_traefik(plateform['name'], plateform['infrastructure']['dependancies']['ingress-controller']['chart-version'], plateform['infrastructure']['dependancies']['ingress-controller']['version'])
+
+
+        post_kubernetes(plateform['name'])
 
         print('Applications deployment:')
         if 'applications' in plateform:

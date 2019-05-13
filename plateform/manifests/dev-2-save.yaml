@@ -1,0 +1,67 @@
+name: dev-2
+gcp-project: slavayssiere-sandbox
+region: europe-west1
+type: dev
+remote-bucket: tf-slavayssiere-wescale
+prefix-bucket: gcp-sample-iac
+ips_whitelist:
+- 37.173.210.210
+- 195.81.225.200
+- 81.250.133.68
+infrastructure:
+  version: 0.0.1
+  range-ip: 10.0.16.0/20
+  range-ip-master: 10.0.0.0/28
+  range-ip-pod: 10.0.32.0/20
+  range-ip-svc: 10.0.48.0/20
+  range-plateform: 10.0.0.0/16
+  bastion:
+    image: debian-cloud/debian-9
+    instance-type: n1-standard-1
+    preemptible: true
+  cloudsql:
+    version: MYSQL_5_7
+    instance-type: "db-f1-micro"
+    disk-size: 20
+  gke:
+    instance-type: n1-standard-1
+    ips_whitelist:
+    - 37.173.210.210
+    - 195.81.224.200
+    - 195.81.225.200
+    max: 30
+    min: 3
+    preemptible: true
+    version: 1.12
+  dependancies:
+    prometheus-operator:
+      enabled: true
+      version: 5.7.0
+    consul:
+      enabled: true
+      version: 3.6.1
+    ingress-controller:
+      public-enabled: true
+      private-enabled: true
+      software: traefik
+      chart-version: 1.68.1
+      version: 1.7.11
+  namespaces:
+  - gateways
+  - webservices
+  - monitoring
+  - ingress-controller
+  - observability
+applications:
+- documentation: http://swagger.io
+  name: app_a
+  version: 1.0.4
+  namespace: webservices
+- documentation: http://swagger.io
+  name: app_a
+  version: 2.0.3
+  namespace: webservices
+- documentation: http://swagger.io
+  name: app_b
+  version: 0.0.3
+  namespace: gateways

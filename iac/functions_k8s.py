@@ -24,8 +24,20 @@ def create_namespace(name):
         else:
             print("%s\n" % e)
 
-def apply_kubernetes(plateform):
-    subprocess.call(["kubernetes/apply.sh", plateform['name']])
+def apply_kubernetes(name):
+    subprocess.call(["kubernetes/apply.sh", name])
+
+def post_kubernetes(name):
+    subprocess.call(["kubernetes/post.sh", name])
+
+def install_consul(name, version_chart):
+    subprocess.call(["kubernetes/consul/install.sh", name, version_chart])
+
+def install_prometheus_operator(name, version_chart):
+    subprocess.call(["kubernetes/prometheus-operator/install.sh", name, version_chart])
+
+def install_traefik(name, version_chart, version_app):
+    subprocess.call(["kubernetes/traefik/install.sh", name, version_chart, version_app])
 
 def save_secrets(user1_password, user2_password, sa_key, name):
     # subprocess.call(["scripts/create-secrets.sh", user1_password, user2_password])
@@ -86,7 +98,7 @@ def get_secret():
         password_user1 = base64.b64decode(api_response.data['password'])
     except ApiException as e:
         # print("Exception when calling CoreV1Api->read_secret: %s\n" % e)
-        print("cloudsql-secrets-user1 already exist")
+        print("cloudsql-secrets-user1 not exist")
         password_user1 = randomString()
 
     try:
@@ -94,7 +106,7 @@ def get_secret():
         password_user2 = base64.b64decode(api_response.data['password'])
     except ApiException as e:
         # print("Exception when calling CoreV1Api->read_secret: %s\n" % e)
-        print("cloudsql-secrets-user2 already exist")
+        print("cloudsql-secrets-user2 not exist")
         password_user2 = randomString()
 
     return password_user1, password_user2
