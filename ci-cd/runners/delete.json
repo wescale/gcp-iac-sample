@@ -1,0 +1,13 @@
+{
+    "name": "delete",
+    "script_path": "python destroy.py",
+    "description": "delete env",
+    "working_directory": "/app/scripts/",
+    "parameters": [
+      {
+        "name": "plateform-name",
+        "type": "string"
+      }
+    ]
+  }
+  

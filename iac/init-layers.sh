@@ -1,6 +1,5 @@
 #!/bin/bash
 
-gcloud config set core/account slavayssiere-sandbox
 backend_bucket="tf-slavayssiere-wescale"
 backend_prefix="gcp-sample-iac"
 

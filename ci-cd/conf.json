@@ -1,0 +1,16 @@
+{
+    "port": 8080,
+    "title": "slavayssiere-test",
+    "auth": {
+        "type": "google_oauth",
+        "client_id": "GOOGLE_CLIENT_ID",
+        "secret": "GOOGLE_SECRET"
+    },
+    "access": {
+        "allowed_users": ["sebastien.lavayssiere@wescale.fr"]
+    },
+    "logging": {
+      "execution_file": "/dev/stdout",
+      "execution_date_format": "%y-%m-%d_%H-%M"
+    }
+  }

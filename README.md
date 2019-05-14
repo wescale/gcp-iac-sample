@@ -226,8 +226,8 @@ A la fin pour tester la connexion à CloudSQL:
 
 ```language-bash
 NOM_PF="dev-2"
-PASSWORD="$(kubectl -n webservices get secrets cloudsql-secrets-user1 -o=jsonpath='{.data.password}' | base64 --decode)"
-kubectl run mysql-client --image=mysql:5.7 -it --rm --restart=Never -- mysql -h bdd.$NOM_PF.internal.lp -uuser1-$NOM_PF -p$PASSWORD
+PASSWORD="$(kubectl -n webservices get secrets cloudsql-secrets-admin -o=jsonpath='{.data.password}' | base64 --decode)"
+kubectl run mysql-client --image=mysql:5.7 -it --rm --restart=Never -- mysql -h bdd.$NOM_PF.internal.lp -uadmin-$NOM_PF -p$PASSWORD
 ```
 
 ### Suppression
