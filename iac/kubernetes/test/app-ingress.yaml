@@ -1,0 +1,16 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: basic-ingress
+  namespace: webservices
+  annotations:
+    kubernetes.io/ingress.class: public-ingress
+spec:
+  rules:
+  - host: dev-2.gcp-wescale.slavayssiere.fr
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: ws-service
+          servicePort: 8080

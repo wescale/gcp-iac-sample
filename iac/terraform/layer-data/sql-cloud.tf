@@ -29,6 +29,11 @@ resource "google_sql_database_instance" "lp-instance-sql" {
       update_track = "stable"
     }
   }
+
+  timeouts {
+    create = "20m"
+    delete = "20m"
+  }
 }
 
 resource "google_sql_database_instance" "lp-instance-sql-slave" {
@@ -56,23 +61,28 @@ resource "google_sql_database_instance" "lp-instance-sql-slave" {
   replica_configuration = {
     failover_target = true
   }
+
+  timeouts {
+    create = "20m"
+    delete = "20m"
+  }
 }
 
-resource "google_sql_user" "lb-sql-user1" {
+resource "google_sql_user" "lb-sql-admin" {
   depends_on = ["google_sql_database_instance.lp-instance-sql"]
 
-  name     = "user1-${terraform.workspace}"
+  name     = "admin-${terraform.workspace}"
   instance = "lp-instance-sql-${terraform.workspace}-${var.unique_id}"
-  password = "${var.user1_password}"
+  password = "${var.admin_password}"
   host     = "%"
 }
 
-resource "google_sql_user" "lb-sql-user2" {
+resource "google_sql_user" "lb-sql-app" {
   depends_on = ["google_sql_database_instance.lp-instance-sql"]
 
-  name     = "user2-${terraform.workspace}"
+  name     = "app-${terraform.workspace}"
   instance = "lp-instance-sql-${terraform.workspace}-${var.unique_id}"
-  password = "${var.user2_password}"
+  password = "${var.app_password}"
   host     = "%"
 }
 

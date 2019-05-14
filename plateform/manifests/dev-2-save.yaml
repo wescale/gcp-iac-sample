@@ -65,3 +65,13 @@ applications:
   name: app_b
   version: 0.0.3
   namespace: gateways
+- name: ws-deployment
+  paths: 
+  - 'kubernetes/test/app-deployment.yaml'
+  - 'kubernetes/test/app-service.yaml'
+  - 'kubernetes/test/app-ingress.yaml'
+  namespace: webservices
+  cloudsql:
+    user: test-user
+    user-secret: test-user-secret
+    database: test

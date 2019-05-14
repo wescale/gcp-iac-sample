@@ -35,14 +35,20 @@ spec:
         - name: MYSQL_PORT
           value: "3306"
         - name: MYSQL_USER
-          value: "user1-dev-2"
+          valueFrom:
+            secretKeyRef:
+              name: test-user-secret
+              key: user
         - name: MYSQL_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: cloudsql-secrets-user1
+              name: test-user-secret
               key: password
         - name: MYSQL_DATABASE
-          value: "my-database"
+          valueFrom:
+            secretKeyRef:
+              name: test-user-secret
+              key: database
         ports:
         - containerPort: 8080
           name: rest-api-ws
@@ -61,37 +67,3 @@ spec:
           httpGet:
             path: /ready
             port: 8080
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: ws-service
-  namespace: webservices
-  labels:
-    app: webservice
-    k8s-app: ws-deployment
-spec:
-  ports:
-    - port: 8080
-      targetPort: 8080
-      name: rest-api-ws
-  selector:
-    app: webservice
-    k8s-app: ws-deployment
----
-apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  name: basic-ingress
-  namespace: webservices
-  annotations:
-    kubernetes.io/ingress.class: public-ingress
-spec:
-  rules:
-  - host: dev-2.gcp-wescale.slavayssiere.fr
-    http:
-      paths:
-      - path: /
-        backend:
-          serviceName: ws-service
-          servicePort: 8080

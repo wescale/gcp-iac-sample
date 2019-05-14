@@ -2,7 +2,7 @@
 
 import yaml
 from functions_iac import create_base, create_kubernetes, create_data, get_service_account, deploy_assets, create_bastion
-from functions_k8s import connect_gke, create_namespace, get_secret, save_secrets, apply_kubernetes, deploy_helm, wait_cluster_if_exist, install_prometheus_operator, install_consul, install_traefik, post_kubernetes
+from functions_k8s import connect_gke, create_namespace, get_secret, save_secrets, apply_kubernetes, deploy_helm, wait_cluster_if_exist, install_prometheus_operator, install_consul, install_traefik, deploy_yaml
 from utils_iac import randomString
 import sys
 
@@ -50,9 +50,9 @@ with open("../plateform/manifests/"+name_file+".yaml", 'r') as stream:
 
         if 'cloudsql' in plateform['infrastructure']:
             print("Layer-data...")
-            user1_password, user2_password = get_secret()
-            print("user1_password:"+ user1_password)
-            print("user2_password:"+ user2_password)
+            admin_password, app_password = get_secret()
+            print("admin_password:"+ admin_password)
+            print("app_password:"+ app_password)
 
             update_yaml = False
             if 'instance-num' in plateform['infrastructure']['cloudsql']:
@@ -64,7 +64,7 @@ with open("../plateform/manifests/"+name_file+".yaml", 'r') as stream:
                 update_yaml = True
 
             print("unique-id:"+ unique_id)
-            create_data(plateform, user1_password, user2_password, unique_id)
+            create_data(plateform, admin_password, app_password, unique_id)
             plateform['infrastructure']['cloudsql']['instance-num']=unique_id
 
             if update_yaml:
@@ -73,7 +73,7 @@ with open("../plateform/manifests/"+name_file+".yaml", 'r') as stream:
 
             print("Save SQL secrets in kubernetes")
             sa_key = get_service_account()
-            save_secrets(user1_password, user2_password, sa_key, plateform['name'])
+            save_secrets(admin_password, app_password, sa_key, plateform['name'])
 
         else:
             print("Layer-data skip !")
@@ -85,14 +85,15 @@ with open("../plateform/manifests/"+name_file+".yaml", 'r') as stream:
         install_consul(plateform['name'], plateform['infrastructure']['dependancies']['consul']['version'])
         install_traefik(plateform['name'], plateform['infrastructure']['dependancies']['ingress-controller']['chart-version'], plateform['infrastructure']['dependancies']['ingress-controller']['version'])
 
-
-        post_kubernetes(plateform['name'])
-
         print('Applications deployment:')
         if 'applications' in plateform:
             for app in plateform['applications']:
-                print("Helm apply for " + app['name'] + ", version:" + app['version'])
-                deploy_helm(app['name'], app['version'], app['namespace'])
+                if 'version' in app:
+                    print("Helm apply for " + app['name'] + ", version:" + app['version'])
+                    deploy_helm(app['name'], app['version'], app['namespace'])
+                else:
+                    admin_password, app_password = get_secret()
+                    deploy_yaml(plateform['name'], app, admin_password)
 
         print('static assets:')
         deploy_assets(plateform['name'])

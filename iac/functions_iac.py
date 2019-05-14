@@ -150,7 +150,7 @@ def delete_kubernetes(plateform):
         raise Exception("error in Terraform layer-kubernetes")
 
 
-def create_data(plateform, user1_password, user2_password, unique_id):
+def create_data(plateform, admin_password, app_password, unique_id):
     tf = Terraform(working_dir='terraform/layer-data')
     code, _, _ = tf.cmd("workspace select " + plateform['name'], capture_output=False, no_color=IsNotFlagged, skip_plan=IsNotFlagged)
     if code == 1:
@@ -164,8 +164,8 @@ def create_data(plateform, user1_password, user2_password, unique_id):
             'database_version': plateform['infrastructure']['cloudsql']['version'],
             'database_instance_type': plateform['infrastructure']['cloudsql']['instance-type'],
             'database_disk_size': plateform['infrastructure']['cloudsql']['disk-size'],
-            'user1_password': user1_password,
-            'user2_password': user2_password,
+            'admin_password': admin_password,
+            'app_password': app_password,
             "unique_id": unique_id,
             'env': plateform['type']
         }, 
@@ -177,7 +177,7 @@ def create_data(plateform, user1_password, user2_password, unique_id):
     if code != 0:
         raise Exception("error in Terraform layer-data")
 
-def delete_data(plateform, user1_password, user2_password, unique_id):
+def delete_data(plateform, admin_password, app_password, unique_id):
     tf = Terraform(working_dir='terraform/layer-data')
     code, _, _ = tf.cmd("workspace select " + plateform['name'], capture_output=False, no_color=IsNotFlagged, skip_plan=IsNotFlagged)
     code, _, _ = tf.destroy(
@@ -189,8 +189,8 @@ def delete_data(plateform, user1_password, user2_password, unique_id):
             'database_version': plateform['infrastructure']['cloudsql']['version'],
             'database_instance_type': plateform['infrastructure']['cloudsql']['instance-type'],
             'database_disk_size': plateform['infrastructure']['cloudsql']['disk-size'],
-            'user1_password': user1_password,
-            'user2_password': user2_password,
+            'admin_password': admin_password,
+            'app_password': app_password,
             "unique_id": unique_id,
             'env': plateform['type']
         }, 

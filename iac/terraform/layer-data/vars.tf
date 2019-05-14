@@ -10,9 +10,9 @@ variable "database_version" {
   default = "MYSQL_5_6"
 }
 
-variable "user2_password" {}
+variable "app_password" {}
 
-variable "user1_password" {}
+variable "admin_password" {}
 
 variable "unique_id" {}
 
