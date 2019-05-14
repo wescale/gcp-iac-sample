@@ -35,7 +35,7 @@ def create_base(plateform):
         }, 
         capture_output=False, 
         no_color=IsNotFlagged, 
-        skip_plan=IsNotFlagged,
+        skip_plan=True,
         auto_approve=True)
     if code != 0:
         raise Exception("error in Terraform layer-base")
@@ -103,7 +103,7 @@ def create_kubernetes(plateform):
         }, 
         capture_output=False, 
         no_color=IsNotFlagged, 
-        skip_plan=IsNotFlagged,
+        skip_plan=True,
         auto_approve=True)
 
     print("Post Apply script execution...")
@@ -171,7 +171,7 @@ def create_data(plateform, admin_password, app_password, unique_id):
         }, 
         capture_output=False, 
         no_color=IsNotFlagged, 
-        skip_plan=IsNotFlagged,
+        skip_plan=True,
         auto_approve=True)
 
     if code != 0:
@@ -219,7 +219,7 @@ def create_bastion(plateform):
         }, 
         capture_output=False, 
         no_color=IsNotFlagged, 
-        skip_plan=IsNotFlagged,
+        skip_plan=True,
         auto_approve=True)
 
     if code != 0:

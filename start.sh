@@ -2,6 +2,7 @@
 
 gcloud auth activate-service-account $GOOGLE_SA --key-file=$GOOGLE_SA_PATH
 gcloud config set account $GOOGLE_SA
+gcloud config set project slavayssiere-sandbox
 
 sed -i.bak "s/GOOGLE_CLIENT_ID/$GOOGLE_CLIENT_ID/g" /app/conf/conf.json
 sed -i.bak "s/GOOGLE_SECRET/$GOOGLE_SECRET/g" /app/conf/conf.json
