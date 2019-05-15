@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name: webservice
-        image: eu.gcr.io/slavayssiere-sandbox/api-test:0.0.9
+        image: eu.gcr.io/slavayssiere-sandbox/api-test:0.0.13
         imagePullPolicy: Always
         env:
         - name: PREFIX_PATH

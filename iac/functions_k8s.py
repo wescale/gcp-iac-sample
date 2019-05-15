@@ -46,9 +46,10 @@ def save_secrets(admin_password, app_password, sa_key, name):
     api_instance = client.CoreV1Api()
     print("Create secret for 'cloudsql-secrets-admin'")
     body = client.V1Secret(metadata=client.V1ObjectMeta(name="cloudsql-secrets-admin"))
+    username="admin-"+name
     body.data = {
-        "user": base64.b64encode("admin-"+name), 
-        "password": base64.b64encode(admin_password)
+        "user": base64.b64encode(str.encode(username)).decode("utf-8"), 
+        "password": base64.b64encode(admin_password).decode("utf-8")
     }
     body.type = "Opaque" 
     try:
@@ -58,13 +59,14 @@ def save_secrets(admin_password, app_password, sa_key, name):
         if e.status == 409:
             print("secret already exist")
         else:
-            print("%s\n" % e)
+            print("Another error: %s\n" % e)
     
     print("Create secret for 'cloudsql-secrets-app'")
     body = client.V1Secret(metadata=client.V1ObjectMeta(name="cloudsql-secrets-app"))
+    username="app-"+name
     body.data = {
-        "user": base64.b64encode("app-"+name), 
-        "password": base64.b64encode(app_password)
+        "user": base64.b64encode(str.encode(username)).decode("utf-8"), 
+        "password": base64.b64encode(app_password).decode("utf-8")
     }
     body.type = "Opaque"
     try:
@@ -79,7 +81,7 @@ def save_secrets(admin_password, app_password, sa_key, name):
 
     print("Create secret for 'service-account'")
     body = client.V1Secret(metadata=client.V1ObjectMeta(name="service-account"))
-    body.data = {"sa-key": base64.b64encode(sa_key)}
+    body.data = {"sa-key": base64.b64encode(sa_key).decode("utf-8")}
     body.type = "Opaque"
     try:
         api_instance.create_namespaced_secret(body=body, namespace='webservices')
@@ -100,6 +102,7 @@ def get_secret():
         # print("Exception when calling CoreV1Api->read_secret: %s\n" % e)
         print("cloudsql-secrets-admin not exist")
         password_admin = randomString()
+        password_admin = str.encode(password_admin)
 
     try:
         api_response = api_instance.read_namespaced_secret(name='cloudsql-secrets-app', namespace='webservices')
@@ -108,6 +111,7 @@ def get_secret():
         # print("Exception when calling CoreV1Api->read_secret: %s\n" % e)
         print("cloudsql-secrets-app not exist")
         password_app = randomString()
+        password_app = str.encode(password_app)
 
     return password_admin, password_app
 
@@ -133,10 +137,14 @@ def deploy_yaml(name, app, password_admin):
             password = randomString()
 
             body = client.V1Secret(metadata=client.V1ObjectMeta(name=app['cloudsql']['user-secret']))
+            username=app['name']+"-"+name
+            user = base64.b64encode(str.encode(username)).decode("utf-8")
+            pwd = base64.b64encode(str.encode(password)).decode("utf-8")
+            db = base64.b64encode(str.encode(app['cloudsql']['database'])).decode("utf-8")
             body.data = {
-                "user": base64.b64encode(app['name']+"-"+name), 
-                "password": base64.b64encode(password),
-                "database": base64.b64encode(app['cloudsql']['database'])
+                "user": user, 
+                "password": pwd, 
+                "database": db
             }
             body.type = "Opaque"
             try:
@@ -150,6 +158,7 @@ def deploy_yaml(name, app, password_admin):
 
         
         ################### creation du user et database #####################
+        print("create job...")
         api_instance = client.BatchV1Api()
 
         try:
@@ -166,12 +175,13 @@ def deploy_yaml(name, app, password_admin):
                 "MYSQL_HOST":"bdd.dev-2.internal.lp",
                 "MYSQL_PORT":"3306",
                 "MYSQL_USER":"admin-"+name,
-                "MYSQL_PASSWORD":password_admin,
+                "MYSQL_PASSWORD":password_admin.decode("utf-8"),
                 "CREATE_DATABASE":app['cloudsql']['database'],
                 "CREATE_USER":app['name']+"-"+name,
-                "CREATE_PASSWORD":password
+                "CREATE_PASSWORD":password.decode("utf-8")
             })
         try: 
+            print(body)
             api_response = api_instance.create_namespaced_job(app['namespace'], body, pretty=True)
         except ApiException as e:
             print("Exception when calling BatchV1Api->create_namespaced_job: %s\n" % e)
@@ -181,7 +191,10 @@ def deploy_yaml(name, app, password_admin):
     k8s_client = client.ApiClient()
     for path in app['paths']:
         print("Apply: " + path)
-        utils.create_from_yaml(k8s_client, os.getcwd() + "/" + path)
+        try:
+            utils.create_from_yaml(k8s_client, os.getcwd() + "/" + path)
+        except ApiException as e:
+            print("Exception when calling BatchV1Api->create_namespaced_job: %s\n" % e)
     print("Deployment "+app['name']+" created")
         
         

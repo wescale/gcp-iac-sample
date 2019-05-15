@@ -1,7 +1,8 @@
 resource "google_dns_record_set" "lp-bastion-dns" {
-  name = "bastion.${data.terraform_remote_state.layer-base.dns-public-zone}"
-  type = "A"
-  ttl  = 300
+  depends_on = ["google_compute_instance.lp-bastion"]
+  name       = "bastion.${data.terraform_remote_state.layer-base.dns-public-zone}"
+  type       = "A"
+  ttl        = 300
 
   managed_zone = "${data.terraform_remote_state.layer-base.dns-public-zone-name}"
 

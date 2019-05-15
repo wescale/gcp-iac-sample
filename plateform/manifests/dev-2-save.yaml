@@ -8,6 +8,7 @@ ips_whitelist:
 - 37.173.210.210
 - 195.81.225.200
 - 81.250.133.68
+- 81.56.12.49
 infrastructure:
   version: 0.0.1
   range-ip: 10.0.16.0/20

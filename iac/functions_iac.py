@@ -164,8 +164,8 @@ def create_data(plateform, admin_password, app_password, unique_id):
             'database_version': plateform['infrastructure']['cloudsql']['version'],
             'database_instance_type': plateform['infrastructure']['cloudsql']['instance-type'],
             'database_disk_size': plateform['infrastructure']['cloudsql']['disk-size'],
-            'admin_password': admin_password,
-            'app_password': app_password,
+            'admin_password': admin_password.decode("utf-8"),
+            'app_password': app_password.decode("utf-8"),
             "unique_id": unique_id,
             'env': plateform['type']
         }, 
@@ -223,7 +223,7 @@ def create_bastion(plateform):
         auto_approve=True)
 
     if code != 0:
-        raise Exception("error in Terraform layer-data")
+        raise Exception("error in Terraform layer-bastion")
     
 
 def delete_bastion(plateform):

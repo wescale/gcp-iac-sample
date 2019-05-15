@@ -9,6 +9,7 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
+	"github.com/jinzhu/gorm"
 )
 
 // Status a test status struct
@@ -22,7 +23,7 @@ type FileCreation struct {
 	Path string `json:"path"`
 }
 
-func handlerHealthFunc(w http.ResponseWriter, r *http.Request) {
+func handlerHealthFunc(w http.ResponseWriter, r *http.Request, tdb *gorm.DB) error {
 	var stt Status
 	var statusCode int
 	if _, err := os.Stat("/tmp/health_KO"); err == nil {
@@ -37,9 +38,7 @@ func handlerHealthFunc(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(statusCode)
 
-	if err := json.NewEncoder(w).Encode(stt); err != nil {
-		panic(err)
-	}
+	return json.NewEncoder(w).Encode(stt)
 }
 
 func handlerStatusFunc(w http.ResponseWriter, r *http.Request) {
@@ -54,7 +53,7 @@ func handlerStatusFunc(w http.ResponseWriter, r *http.Request) {
 
 var latency int64
 
-func putLatencyFunc(w http.ResponseWriter, r *http.Request) {
+func putLatencyFunc(w http.ResponseWriter, r *http.Request, tdb *gorm.DB) error {
 	vars := mux.Vars(r)
 	latency, _ = strconv.ParseInt(vars["latency_ms"], 10, 64)
 
@@ -62,12 +61,10 @@ func putLatencyFunc(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 
-	if err := json.NewEncoder(w).Encode(stt); err != nil {
-		panic(err)
-	}
+	return json.NewEncoder(w).Encode(stt)
 }
 
-func postFileFunc(w http.ResponseWriter, r *http.Request) {
+func postFileFunc(w http.ResponseWriter, r *http.Request, tdb *gorm.DB) error {
 
 	decoder := json.NewDecoder(r.Body)
 
@@ -86,12 +83,10 @@ func postFileFunc(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 
-	if err := json.NewEncoder(w).Encode(t); err != nil {
-		panic(err)
-	}
+	return json.NewEncoder(w).Encode(t)
 }
 
-func handlerIPFunc(w http.ResponseWriter, r *http.Request) {
+func handlerIPFunc(w http.ResponseWriter, r *http.Request, tdb *gorm.DB) error {
 	var clt []string
 
 	addrs, err := net.InterfaceAddrs()
@@ -112,7 +107,5 @@ func handlerIPFunc(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 
-	if err := json.NewEncoder(w).Encode(clt); err != nil {
-		panic(err)
-	}
+	return json.NewEncoder(w).Encode(clt)
 }

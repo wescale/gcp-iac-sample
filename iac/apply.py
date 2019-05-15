@@ -51,8 +51,12 @@ with open("../plateform/manifests/"+name_file+".yaml", 'r') as stream:
         if 'cloudsql' in plateform['infrastructure']:
             print("Layer-data...")
             admin_password, app_password = get_secret()
-            print("admin_password:"+ admin_password)
-            print("app_password:"+ app_password)
+            print("admin_password:"+ admin_password.decode("utf-8"))
+            print("app_password:"+ app_password.decode("utf-8") )
+
+            print("Save SQL secrets in kubernetes")
+            sa_key = get_service_account()
+            save_secrets(admin_password, app_password, sa_key, plateform['name'])
 
             update_yaml = False
             if 'instance-num' in plateform['infrastructure']['cloudsql']:
@@ -71,9 +75,6 @@ with open("../plateform/manifests/"+name_file+".yaml", 'r') as stream:
                 with open("../plateform/manifests/"+name_file+".yaml", 'w') as yaml_file:
                     yaml.dump(plateform, yaml_file, default_flow_style=False)
 
-            print("Save SQL secrets in kubernetes")
-            sa_key = get_service_account()
-            save_secrets(admin_password, app_password, sa_key, plateform['name'])
 
         else:
             print("Layer-data skip !")

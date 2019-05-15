@@ -1,117 +1,58 @@
 package main
 
 import (
-	"log"
 	"net/http"
 	"os"
-	"time"
-	"strings"
-	"context"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
-	"github.com/opentracing/opentracing-go/ext"
 	opentracing "github.com/opentracing/opentracing-go"
-	jaegercfg "github.com/uber/jaeger-client-go/config"
 
 	"github.com/jinzhu/gorm"
+
+	log "github.com/sirupsen/logrus"
 )
 
-var db *gorm.DB
+var (
+	db *gorm.DB
+)
 
-// LoggerMiddleware add logger and metrics
-func LoggerMiddleware(inner http.HandlerFunc, name string, histogram *prometheus.HistogramVec, counter *prometheus.CounterVec) http.Handler {
+func init() {
+	// Log as JSON instead of the default ASCII formatter.
+	log.SetFormatter(&log.TextFormatter{})
 
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	// Output to stdout instead of the default stderr
+	// Can be any io.Writer, see below for File example
+	log.SetOutput(os.Stdout)
 
-		start := time.Now()
-
-		ctx := context.Background()
-
-		if strings.Compare(name,"healthz") != 0 && strings.Compare(name,"ready") != 0 {
-			var span opentracing.Span
-			wireContext, err := opentracing.GlobalTracer().Extract(
-				opentracing.HTTPHeaders,
-				opentracing.HTTPHeadersCarrier(r.Header))
-			if err != nil {
-				log.Println(err)
-				log.Println(r.Header)
-			}
-
-			// Create the span referring to the RPC client if available.
-			// If wireContext == nil, a root span will be created.
-			span = opentracing.StartSpan(
-				name,
-				ext.RPCServerOption(wireContext))
-
-			defer span.Finish()
-
-			ctx = opentracing.ContextWithSpan(ctx, span)
-		}
-
-		inner.ServeHTTP(w, r.WithContext(ctx))
-
-		if strings.Compare(name,"healthz") != 0  && strings.Compare(name,"ready") != 0 {
-			time := time.Since(start)
-			log.Printf(
-				"%s\t%s\t%s\t%s",
-				r.Method,
-				r.RequestURI,
-				name,
-				time,
-			)
-
-			histogram.WithLabelValues(r.RequestURI).Observe(time.Seconds())
-			if counter != nil {
-				counter.WithLabelValues(r.RequestURI).Inc()
-			}
-		}
-	})
+	// Only log the warning severity or above.
+	log.SetLevel(log.InfoLevel)
 }
 
 func main() {
 
-	prefixPath := os.Getenv("PREFIX_PATH")
-
 	/// Tracer
-	cfg, err := jaegercfg.FromEnv()
+	tracer, closer, err := initJaeger()
 	if err != nil {
-		// parsing errors might happen here, such as when we get a string where we expect a number
-		log.Printf("Could not parse Jaeger env vars: %s", err.Error())
-		return
-	}
-
-	tracer, closer, err := cfg.NewTracer()
-	if err != nil {
-		log.Printf("Could not initialize jaeger tracer: %s", err.Error())
-		return
+		log.Info("Jaeger error")
+		log.Fatal(err)
 	}
 	defer closer.Close()
-
 	opentracing.SetGlobalTracer(tracer)
+	histogram, promCounter := initPrometheus()
 
 	//Database
 	db = connectDB()
 	defer db.Close()
 
+	prefixPath := os.Getenv("PREFIX_PATH")
 	router := mux.NewRouter().StrictSlash(true)
-
-	histogram := prometheus.NewHistogramVec(prometheus.HistogramOpts{
-		Name: "webservice_uri_duration_seconds",
-		Help: "Time to respond",
-	}, []string{"uri"})
-
-	promCounter := prometheus.NewCounterVec(prometheus.CounterOpts{
-		Name: "webservice_count",
-		Help: "counter for api",
-	}, []string{"uri"})
 
 	/// Root
 	var handlerStatus http.Handler
-	handlerStatus = LoggerMiddleware(handlerStatusFunc, "root", histogram, nil)
+	handlerStatus = SimpleMiddleware(handlerStatusFunc)
 	router.
 		Methods("GET").
 		Path(prefixPath).
@@ -151,14 +92,11 @@ func main() {
 		Path(prefixPath + "healthz").
 		Name("healthz").
 		Handler(handlerHealth)
-
-	var readyHealth http.Handler
-	readyHealth = LoggerMiddleware(handlerHealthFunc, "ready", histogram, nil)
 	router.
 		Methods("GET").
 		Path(prefixPath + "ready").
 		Name("ready").
-		Handler(readyHealth)
+		Handler(handlerHealth)
 
 	//Hack
 	var putLatencyHealth http.Handler
@@ -177,9 +115,6 @@ func main() {
 		Name("create_file").
 		Handler(postFileHealth)
 
-	// add prometheus
-	prometheus.Register(histogram)
-	prometheus.Register(promCounter)
 	router.Methods("GET").Path(prefixPath + "metrics").Name("Metrics").Handler(promhttp.Handler())
 
 	// CORS
@@ -187,5 +122,6 @@ func main() {
 	originsOk := handlers.AllowedOrigins([]string{"*"})
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
 
+	log.Info("Start server... at 8080")
 	http.ListenAndServe(":8080", handlers.CORS(originsOk, headersOk, methodsOk)(router))
 }

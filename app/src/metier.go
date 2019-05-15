@@ -4,11 +4,13 @@ import (
 	"encoding/json"
 	"net/http"
 	"os"
-	"fmt"
+	"time"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/smacker/opentracing-gorm"
+
+	log "github.com/sirupsen/logrus"
 )
 
 func connectDB() *gorm.DB {
@@ -20,11 +22,9 @@ func connectDB() *gorm.DB {
 	mypwd  := os.Getenv("MYSQL_PASSWORD")
 	mydata := os.Getenv("MYSQL_DATABASE")
 
-	fmt.Println(myuser+":"+mypwd+"@tcp("+myhost+":"+myport+")/"+mydata+"?charset=utf8mb4&parseTime=True&loc=Local")
-
 	db, err = gorm.Open("mysql", myuser+":"+mypwd+"@tcp("+myhost+":"+myport+")/"+mydata+"?charset=utf8mb4&parseTime=True&loc=Local")
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 	// register callbacks must be called for a root instance of your gorm.DB
     otgorm.AddGormCallbacks(db)
@@ -54,35 +54,30 @@ type Client struct {
 	Service string `json:"service" gorm:"service"`
 }
 
-func handlerFactureFunc(w http.ResponseWriter, r *http.Request) {
+func handlerFactureFunc(w http.ResponseWriter, r *http.Request, tdb *gorm.DB) error {
 	var fct Facture
-
-	tdb := otgorm.SetSpanToGorm(r.Context(), db)
 
 	tdb.First(&fct, "contrat = ?", "Gemalto")
 
 	// wait for latency
-	// time.Sleep(time.Duration(latency) * time.Millisecond)
+	time.Sleep(time.Duration(latency) * time.Millisecond)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 
-	if err := json.NewEncoder(w).Encode(fct); err != nil {
-		panic(err)
-	}
+	return json.NewEncoder(w).Encode(fct)
 }
 
-func handlerClientFunc(w http.ResponseWriter, r *http.Request) {
+func handlerClientFunc(w http.ResponseWriter, r *http.Request, tdb *gorm.DB) error {
 	var clt Client
 
-	tdb := otgorm.SetSpanToGorm(r.Context(), db)
-	
 	tdb.First(&clt, "name = ?", "Gemalto")
+
+	// wait for latency
+	time.Sleep(time.Duration(latency) * time.Millisecond)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 
-	if err := json.NewEncoder(w).Encode(clt); err != nil {
-		panic(err)
-	}
+	return json.NewEncoder(w).Encode(clt)
 }
