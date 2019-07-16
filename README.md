@@ -228,6 +228,12 @@ A la fin pour tester la connexion à CloudSQL:
 NOM_PF="dev-2"
 PASSWORD="$(kubectl -n webservices get secrets cloudsql-secrets-admin -o=jsonpath='{.data.password}' | base64 --decode)"
 kubectl run mysql-client --image=mysql:5.7 -it --rm --restart=Never -- mysql -h bdd.$NOM_PF.internal.lp -uadmin-$NOM_PF -p$PASSWORD
+
+show databases;
+use test;
+show tables;
+select * from clients;
+
 ```
 
 ### Suppression
@@ -248,6 +254,7 @@ Renseigner le nom du fichier, ici "dev-2"
 - Faire des sanity check à la fin du déploiement de l'infra
 - check Yaml au début du projet
 - add restrict IP for cloudarmor
+- enable workload identity
 
 ## To debug
 

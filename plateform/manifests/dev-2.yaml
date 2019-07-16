@@ -1,54 +1,84 @@
-name: dev-2
+applications:
+- documentation: http://swagger.io
+  name: app_a
+  namespace: webservices
+  version: 1.0.4
+- documentation: http://swagger.io
+  name: app_a
+  namespace: webservices
+  version: 2.0.3
+- documentation: http://swagger.io
+  name: app_b
+  namespace: gateways
+  version: 0.0.3
+- cloudsql:
+    database: test
+    user: test-user
+    user-secret: test-user-secret
+  name: ws-deployment
+  namespace: webservices
+  paths:
+  - kubernetes/test/app-deployment.yaml
+  - kubernetes/test/app-service.yaml
+  - kubernetes/test/app-ingress.yaml
+  - kubernetes/test/app-hpa.yaml
+  - kubernetes/test/app-servicemonitor.yaml
 gcp-project: slavayssiere-sandbox
-region: europe-west1
-type: dev
-remote-bucket: tf-slavayssiere-wescale
-prefix-bucket: gcp-sample-iac
-ips_whitelist:
-- 37.173.210.210
-- 195.81.225.200
 infrastructure:
-  version: 0.0.1
-  range-ip: 10.0.16.0/20
-  range-ip-master: 10.0.0.0/28
-  range-ip-pod: 10.0.32.0/20
-  range-ip-svc: 10.0.48.0/20
-  range-plateform: 10.0.0.0/16
   bastion:
     image: debian-cloud/debian-9
     instance-type: n1-standard-1
     preemptible: true
   cloudsql:
-    version: MYSQL_5_7
-    instance-type: "db-f1-micro"
     disk-size: 20
+    instance-num: usqingexgu
+    instance-type: db-f1-micro
+    version: MYSQL_5_7
+  dependancies:
+    consul:
+      enabled: true
+      version: 3.6.1
+    ingress-controller:
+      chart-version: 1.68.1
+      private-enabled: true
+      public-enabled: true
+      software: traefik
+      version: 1.7.11
+    prometheus-operator:
+      enabled: true
+      version: 5.7.0
   gke:
     instance-type: n1-standard-1
     ips_whitelist:
-    - 37.173.210.210
+    - 178.251.80.212
+    - 195.81.224.200
+    - 195.81.225.200
+    - 81.56.12.49
     max: 30
     min: 3
     preemptible: true
     version: 1.12
-  dependancies:
-    certmanager:
-      enabled: true
-      version: x
   namespaces:
-  - gateways
-  - webservices
-  - monitoring
-  - ingress-controller
-applications:
-- documentation: http://swagger.io
-  name: app_a
-  version: 1.0.4
-  namespace: webservices
-- documentation: http://swagger.io
-  name: app_a
-  version: 2.0.3
-  namespace: webservices
-- documentation: http://swagger.io
-  name: app_b
-  version: 0.0.3
-  namespace: gateways
+  - name: gateways
+  - name: webservices
+    prometheus:
+      name: prometheus-webservices
+  - name: monitoring
+  - name: ingress-controller
+  - name: observability
+  range-ip: 10.0.16.0/20
+  range-ip-master: 10.0.0.0/28
+  range-ip-pod: 10.0.32.0/20
+  range-ip-svc: 10.0.48.0/20
+  range-plateform: 10.0.0.0/16
+  version: 0.0.1
+ips_whitelist:
+- 178.251.80.212
+- 195.81.225.200
+- 195.81.224.200
+- 81.56.12.49
+name: dev-2
+prefix-bucket: gcp-sample-iac
+region: europe-west1
+remote-bucket: tf-slavayssiere-wescale
+type: dev

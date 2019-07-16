@@ -1,0 +1,14 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: sm-service
+  labels:
+    app: webservice
+    k8s-app: ws-deployment
+spec:
+  selector:
+    matchLabels:
+      app: webservice
+      k8s-app: ws-deployment
+  endpoints:
+  - port: rest-api-ws

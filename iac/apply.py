@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import yaml
-from functions_iac import create_base, create_kubernetes, create_data, get_service_account, deploy_assets, create_bastion
+from functions_iac import create_base, create_kubernetes, create_data, deploy_assets, create_bastion
 from functions_k8s import connect_gke, create_namespace, get_secret, save_secrets, apply_kubernetes, deploy_helm, wait_cluster_if_exist, install_prometheus_operator, install_consul, install_traefik, deploy_yaml
 from utils_iac import randomString
 import sys
@@ -55,8 +55,7 @@ with open("../plateform/manifests/"+name_file+".yaml", 'r') as stream:
             print("app_password:"+ app_password.decode("utf-8") )
 
             print("Save SQL secrets in kubernetes")
-            sa_key = get_service_account()
-            save_secrets(admin_password, app_password, sa_key, plateform['name'])
+            save_secrets(admin_password, app_password, plateform['name'])
 
             update_yaml = False
             if 'instance-num' in plateform['infrastructure']['cloudsql']:
@@ -88,13 +87,16 @@ with open("../plateform/manifests/"+name_file+".yaml", 'r') as stream:
 
         print('Applications deployment:')
         if 'applications' in plateform:
+            admin_password, app_password = get_secret()
             for app in plateform['applications']:
                 if 'version' in app:
                     print("Helm apply for " + app['name'] + ", version:" + app['version'])
                     deploy_helm(app['name'], app['version'], app['namespace'])
                 else:
-                    admin_password, app_password = get_secret()
-                    deploy_yaml(plateform['name'], app, admin_password)
+                    try:
+                        deploy_yaml(plateform['name'], app, admin_password)
+                    except:
+                        print("app deployment error")
 
         print('static assets:')
         deploy_assets(plateform['name'])

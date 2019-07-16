@@ -3,6 +3,10 @@ resource "google_container_cluster" "lp-cluster" {
   name     = "lp-cluster-${terraform.workspace}"
   location = "${var.region}"
 
+  workload_identity_config {
+    identity_namespace = "${var.gcp-project}.svc.id.goog"
+  }
+
   private_cluster_config {
     enable_private_endpoint = false
     enable_private_nodes    = true
@@ -111,6 +115,10 @@ resource "google_container_node_pool" "np-default" {
       disable-legacy-endpoints = "true"
     }
 
+    workload_metadata_config {
+      node_metadata = "GKE_METADATA_SERVER"
+    }
+
     labels {
       Name      = "lp-cluster"
       Plateform = "${terraform.workspace}"
@@ -130,54 +138,3 @@ resource "google_container_node_pool" "np-default" {
     auto_upgrade = true
   }
 }
-
-// resource "google_container_node_pool" "np-back" {
-//   provider   = "google-beta"
-//   name       = "np-back-${terraform.workspace}"
-//   location   = "${var.region}"
-//   cluster    = "${google_container_cluster.lp-cluster.name}"
-//   node_count = 1
-
-
-//   node_config {
-//     machine_type = "${var.instance-type}"
-//     preemptible  = "${var.preemptible}"
-
-
-//     oauth_scopes = [
-//       "https://www.googleapis.com/auth/compute",
-//       "https://www.googleapis.com/auth/devstorage.read_only",
-//       "https://www.googleapis.com/auth/logging.write",
-//       "https://www.googleapis.com/auth/monitoring",
-//       "https://www.googleapis.com/auth/ndev.clouddns.readwrite"
-//     ]
-
-
-//     metadata {
-//       disable-legacy-endpoints = "false"
-//     }
-
-
-//     labels {
-//       Name      = "lp-cluster"
-//       Plateform = "${terraform.workspace}"
-//       NodePool  = "np-back"
-//     }
-
-
-//     tags = ["kubernetes", "lp-cluster-${terraform.workspace}"]
-//   }
-
-
-//   autoscaling {
-//     min_node_count = "${var.min_node}"
-//     max_node_count = "${var.max_node}"
-//   }
-
-
-//   management {
-//     auto_repair  = true
-//     auto_upgrade = true
-//   }
-// }
-

@@ -51,3 +51,17 @@ resource "google_compute_firewall" "allow-public-http-lb-to-gke" {
   source_ranges = ["${data.google_compute_lb_ip_ranges.ranges.http_ssl_tcp_internal}"]
   target_tags   = ["kubernetes", "lp-cluster-${terraform.workspace}"]
 }
+
+resource "google_compute_firewall" "allow-apiservice-to-master" {
+  name      = "allow-apiservice-to-master-${terraform.workspace}"
+  network   = "${data.terraform_remote_state.layer-base.lp-network-self-link}"
+  direction = "INGRESS"
+
+  allow {
+    protocol = "tcp"
+    ports    = ["8443"]
+  }
+
+  source_ranges = ["${var.range_ip_master}"]
+  target_tags   = ["kubernetes", "lp-cluster-${terraform.workspace}"]
+}

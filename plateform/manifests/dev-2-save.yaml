@@ -5,9 +5,9 @@ type: dev
 remote-bucket: tf-slavayssiere-wescale
 prefix-bucket: gcp-sample-iac
 ips_whitelist:
-- 37.173.210.210
 - 195.81.225.200
-- 81.250.133.68
+- 195.81.224.200
+- 178.251.80.212
 - 81.56.12.49
 infrastructure:
   version: 0.0.1
@@ -27,9 +27,10 @@ infrastructure:
   gke:
     instance-type: n1-standard-1
     ips_whitelist:
-    - 37.173.210.210
+    - 195.81.225.200
     - 195.81.224.200
     - 195.81.225.200
+    - 81.56.12.49
     max: 30
     min: 3
     preemptible: true
@@ -47,12 +48,16 @@ infrastructure:
       software: traefik
       chart-version: 1.68.1
       version: 1.7.11
+    kubedb:
+      version: 0.12.0 # to be variabilized
   namespaces:
-  - gateways
-  - webservices
-  - monitoring
-  - ingress-controller
-  - observability
+  - name: gateways
+  - name: webservices
+    prometheus: 
+      name: prometheus-webservices
+  - name: monitoring
+  - name: ingress-controller
+  - name: observability
 applications:
 - documentation: http://swagger.io
   name: app_a
@@ -68,9 +73,12 @@ applications:
   namespace: gateways
 - name: ws-deployment
   paths: 
-  - 'kubernetes/test/app-deployment.yaml'
-  - 'kubernetes/test/app-service.yaml'
-  - 'kubernetes/test/app-ingress.yaml'
+  - kubernetes/test/app-deployment.yaml
+  - kubernetes/test/app-service.yaml
+  - kubernetes/test/app-ingress.yaml
+  - kubernetes/test/app-hpa.yaml
+  - kubernetes/test/app-servicemonitor.yaml
+  - kubernetes/test/app-serviceaccount.yaml
   namespace: webservices
   cloudsql:
     user: test-user

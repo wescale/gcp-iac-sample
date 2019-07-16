@@ -10,11 +10,6 @@ def create_project():
     if code != 0:
         raise Exception("error in Terraform layer-project")
 
-def get_service_account():
-    tf = Terraform(working_dir='terraform/layer-base')
-    _, stdout, _ = tf.cmd("output app_a_key", capture_output=True, no_color=IsFlagged)
-    return base64.b64decode(stdout)
-
 def create_base(plateform):
     tf = Terraform(working_dir='terraform/layer-base')
     code, _, _ = tf.cmd("workspace select " + plateform['name'], capture_output=False, no_color=IsNotFlagged, skip_plan=IsNotFlagged)

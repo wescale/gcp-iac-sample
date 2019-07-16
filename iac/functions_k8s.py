@@ -10,12 +10,11 @@ def connect_gke(plateform):
     print("Connect to GKE...")
     subprocess.call(["scripts/connect-gke.sh", plateform['name'], plateform['region'] ,plateform['gcp-project']])
 
-def create_namespace(name):
-    print("Create namespace:" + name)
+def create_namespace(ns):
+    print("Create namespace:" + ns['name'])
     config.load_kube_config()
-    # subprocess.call(["scripts/create-ns.sh", name])
     api_instance = client.CoreV1Api()
-    body = client.V1Namespace(metadata=client.V1ObjectMeta(name=name)) # V1Namespace | 
+    body = client.V1Namespace(metadata=client.V1ObjectMeta(name=ns['name'])) # V1Namespace | 
     
     try: 
         api_instance.create_namespace(body)
@@ -41,7 +40,7 @@ def install_prometheus_operator(name, version_chart):
 def install_traefik(name, version_chart, version_app):
     subprocess.call(["kubernetes/traefik/install.sh", name, version_chart, version_app])
 
-def save_secrets(admin_password, app_password, sa_key, name):
+def save_secrets(admin_password, app_password, name):
     config.load_kube_config()
     api_instance = client.CoreV1Api()
     print("Create secret for 'cloudsql-secrets-admin'")
@@ -68,20 +67,6 @@ def save_secrets(admin_password, app_password, sa_key, name):
         "user": base64.b64encode(str.encode(username)).decode("utf-8"), 
         "password": base64.b64encode(app_password).decode("utf-8")
     }
-    body.type = "Opaque"
-    try:
-        api_instance.create_namespaced_secret(body=body, namespace='webservices')
-    except ApiException as e:
-        # print("Exception when calling CoreV1Api->create_namespaced_secret: %s\n" % e)
-        if e.status == 409:
-            print("secret already exist")
-        else:
-            print("%s\n" % e)
-
-
-    print("Create secret for 'service-account'")
-    body = client.V1Secret(metadata=client.V1ObjectMeta(name="service-account"))
-    body.data = {"sa-key": base64.b64encode(sa_key).decode("utf-8")}
     body.type = "Opaque"
     try:
         api_instance.create_namespaced_secret(body=body, namespace='webservices')
@@ -130,7 +115,7 @@ def deploy_yaml(name, app, password_admin):
         ################### gestion du secret dans k8s #####################
         try:
             api_response = api_instance.read_namespaced_secret(name=app['cloudsql']['user-secret'], namespace=app['namespace'])
-            password = base64.b64decode(api_response.data['password'])
+            password = base64.b64decode(api_response.data['password']).decode("utf-8")
         except ApiException as e:
             # print("Exception when calling CoreV1Api->read_secret: %s\n" % e)
             print(app['cloudsql']['user-secret']+" not exist")
@@ -178,10 +163,9 @@ def deploy_yaml(name, app, password_admin):
                 "MYSQL_PASSWORD":password_admin.decode("utf-8"),
                 "CREATE_DATABASE":app['cloudsql']['database'],
                 "CREATE_USER":app['name']+"-"+name,
-                "CREATE_PASSWORD":password.decode("utf-8")
+                "CREATE_PASSWORD":password
             })
-        try: 
-            print(body)
+        try:
             api_response = api_instance.create_namespaced_job(app['namespace'], body, pretty=True)
         except ApiException as e:
             print("Exception when calling BatchV1Api->create_namespaced_job: %s\n" % e)

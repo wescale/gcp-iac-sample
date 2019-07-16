@@ -9,7 +9,7 @@ spec:
     type: elasticsearch
     options:
       es:
-        server-urls: http://elasticsearch-client:9200
+        server-urls: http://es-jaeger:9200
   ingress:
     enabled: false
 ---
