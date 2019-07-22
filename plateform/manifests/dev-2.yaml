@@ -31,7 +31,6 @@ infrastructure:
     preemptible: true
   cloudsql:
     disk-size: 20
-    instance-num: usqingexgu
     instance-type: db-f1-micro
     version: MYSQL_5_7
   dependancies:

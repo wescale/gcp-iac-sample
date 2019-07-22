@@ -6,8 +6,10 @@ metadata:
 spec:
   version: "6.3-v1"
   storageType: Durable
-  authPlugin: "None"
+  authPlugin: "SearchGuard"
   enableSSL: false
+  databaseSecret:
+    secretName: jaeger-secrets
   topology:
     master:
       prefix: master

@@ -89,4 +89,5 @@ kubectl apply -f kubernetes/jaeger/jaeger.yaml
 
 # kubectl delete -f kubernetes/jaeger/jaeger.yaml
 
+# helm install --name chaos-day stable/chaoskube -f kubernetes/chaos/values-monkey.yaml
 

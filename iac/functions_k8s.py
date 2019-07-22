@@ -24,6 +24,8 @@ def create_namespace(ns):
             print("namespace already exist")
         else:
             print("%s\n" % e)
+    
+    subprocess.call(["scripts/deploy_prometheus.sh", ns['name'], ns['prometheus']['name']])
 
 def apply_kubernetes(name):
     subprocess.call(["kubernetes/apply.sh", name])

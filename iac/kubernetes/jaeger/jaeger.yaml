@@ -10,6 +10,7 @@ spec:
     options:
       es:
         server-urls: http://es-jaeger:9200
+    secretName: jaeger-secrets
   ingress:
     enabled: false
 ---

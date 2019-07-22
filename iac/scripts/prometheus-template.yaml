@@ -1,0 +1,126 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: NAME
+  namespace: NSPACE
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: Role
+metadata:
+  name: NAME
+  namespace: NSPACE
+rules:
+- apiGroups: [""]
+  resources:
+  - services
+  - endpoints
+  - pods
+  verbs: ["get", "list", "watch"]
+- apiGroups: [""]
+  resources:
+  - configmaps
+  verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  name: NAME
+  namespace: NSPACE
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: NAME
+subjects:
+- kind: ServiceAccount
+  name: NAME
+  namespace: NSPACE
+---
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: NAME
+  namespace: NSPACE
+  labels:
+    k8s-app: NAME
+spec:
+  ruleSelector:
+    matchLabels:
+      role: alert-rules
+      prometheus: NAME
+  securityContext:
+    fsGroup: 2000
+    runAsNonRoot: true
+    runAsUser: 1000
+  serviceAccountName: NAME
+  logLevel: info
+  paused: false
+  retention: 2d
+  externalUrl: /NAME
+  routePrefix: /
+  replicas: 2
+  serviceMonitorNamespaceSelector:
+    matchNames:
+      - monitoring
+      - default
+      - NSPACE
+  serviceMonitorSelector:
+    matchExpressions:
+    - key: k8s-app
+      operator: In
+      values: 
+      - prometheus-app
+      - ws-deployment
+  resources:
+    requests:
+      memory: "1000Mi"
+      cpu: "500m"
+  enableAdminAPI: true
+  ports:
+  - name: prometheus
+    containerPort: 9090
+  storage:
+    volumeClaimTemplate:
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 5Gi
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: NAME-ingress
+  namespace: NSPACE
+  annotations:
+    kubernetes.io/ingress.class: private-ingress
+    traefik.ingress.kubernetes.io/rule-type: PathPrefixStrip
+spec:
+  rules:
+  - host: admin.dev-2.gcp-wescale.slavayssiere.fr
+    http:
+      paths:
+      - path: /NAME/
+        backend:
+          serviceName: prometheus-operated
+          servicePort: 9090
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app: prometheus-operator-grafana
+    release: prometheus-operator
+    grafana_datasource: "NAME"
+  name: NAME-operator-grafana-datasource
+  namespace: observability
+data:
+  datasource-NAME.yaml: |-
+    apiVersion: 1
+    datasources:
+    - name: NAME
+      type: prometheus
+      url: http://prometheus-operated.NSPACE:9090/
+      access: proxy
+      isDefault: false

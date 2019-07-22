@@ -100,7 +100,7 @@ monitoring:
     namespace: "monitoring"
   serviceMonitor:
     labels:
-      k8s-app: prometheus
+      k8s-app: prometheus-app
 
 # Additional psp names passed to operator
 # example: helm template ./chart/kubedb \
