@@ -9,8 +9,7 @@ spec:
     type: elasticsearch
     options:
       es:
-        server-urls: http://es-jaeger:9200
-    secretName: jaeger-secrets
+        server-urls: http://es-jaeger.monitoring:9200
   ingress:
     enabled: false
 ---

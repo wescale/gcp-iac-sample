@@ -4,12 +4,11 @@ metadata:
   name: es-jaeger
   namespace: monitoring
 spec:
-  version: "6.3-v1"
+  version: "6.5.3"
   storageType: Durable
-  authPlugin: "SearchGuard"
+  authPlugin: "None"
   enableSSL: false
-  databaseSecret:
-    secretName: jaeger-secrets
+  terminationPolicy: "Delete"
   topology:
     master:
       prefix: master

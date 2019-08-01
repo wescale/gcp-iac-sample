@@ -6,6 +6,7 @@ version_chart=$2
 test=$(helm status prometheus-operator)
 if [ $? -ne 0 ]; then
 
+    echo "install in admin.$workspace.gcp-wescale.slavayssiere.fr"
     helm install stable/prometheus-operator \
         --name prometheus-operator \
         --namespace observability \

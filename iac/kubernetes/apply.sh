@@ -48,6 +48,8 @@ if [ "$test_tiller_state" = true ] ; then
     sleep 5
 fi
 
+./kubernetes/prometheus-operator/install.sh $workspace
+
 helm install appscode/kubedb \
   --name kubedb-operator \
   --version 0.12.0 \
