@@ -75,15 +75,22 @@ resource "google_container_cluster" "lp-cluster" {
     name = "default-pool"
   }
 
-  // cluster_autoscaling {
-  //   enabled = true
+  # FIXME: variabilize this
+  cluster_autoscaling {
+    enabled = "true"
 
+    resource_limits {
+      resource_type = "cpu"
+      maximum       = "20"
+      minimum       = "6"
+    }
 
-  //   // The resource_limits block supports:
-  //   // resource_type - (Required) See the docs for a list of permitted types - cpu, memory, and others.
-  //   // minimum - (Optional) The minimum value for the resource type specified.
-  //   // maximum - (Optional) The maximum value for the resource type specified.
-  // }
+    resource_limits {
+      resource_type = "memory"
+      maximum       = "100"
+      minimum       = "20"
+    }
+  }
 
   maintenance_policy {
     daily_maintenance_window {

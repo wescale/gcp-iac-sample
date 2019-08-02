@@ -34,7 +34,7 @@ infrastructure:
     max: 30
     min: 3
     preemptible: true
-    version: 1.12
+    version: 1.13.7
   dependancies:
     prometheus-operator:
       enabled: true

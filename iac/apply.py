@@ -81,7 +81,6 @@ with open("../plateform/manifests/"+name_file+".yaml", 'r') as stream:
         # apply kubernetes
         apply_kubernetes(plateform['name'])
 
-        install_prometheus_operator(plateform['name'], plateform['infrastructure']['dependancies']['prometheus-operator']['version'])
         install_consul(plateform['name'], plateform['infrastructure']['dependancies']['consul']['version'])
         install_traefik(plateform['name'], plateform['infrastructure']['dependancies']['ingress-controller']['chart-version'], plateform['infrastructure']['dependancies']['ingress-controller']['version'])
 
